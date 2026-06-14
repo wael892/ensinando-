@@ -3,12 +3,1016 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Anime Gacha Life Studio</title>
+    <style>
+        :root {
+            --bg-dark: #0f0c1b;
+            --panel-bg: #1d1830;
+            --accent-pink: #ff4a85;
+            --accent-purple: #8a2be2;
+            --text-light: #f3effa;
+            --neon-glow: 0 0 10px rgba(255, 74, 133, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        header {
+            background: linear-gradient(90deg, var(--panel-bg), #2a1b40);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-pink);
+            box-shadow: var(--neon-glow);
+            z-index: 10;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 24px;
+            color: var(--accent-pink);
+            text-shadow: var(--neon-glow);
+        }
+
+        .currency-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .currency-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--accent-purple);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+        }
+
+        .currency-box span {
+            color: #ffd700;
+        }
+
+        /* Main Game Layout */
+        #game-container {
+            display: flex;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Navigation Menu */
+        #nav-menu {
+            width: 80px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 20px;
+            z-index: 5;
+        }
+
+        .nav-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 11px;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--accent-pink);
+            border-color: var(--text-light);
+            box-shadow: var(--neon-glow);
+            transform: scale(1.05);
+        }
+
+        /* Game Screens */
+        .screen {
+            display: none;
+            flex: 1;
+            position: relative;
+            height: 100%;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* SCREEN: CUSTOMIZER */
+        #customizer-screen {
+            display: none;
+        }
+        #customizer-screen.active {
+            display: flex;
+        }
+
+        .preview-pane {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #2a1b40 0%, #110922 100%);
+            position: relative;
+        }
+
+        /* Character Layer System */
+        .avatar-renderer {
+            width: 350px;
+            height: 480px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .avatar-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: transform 0.2s ease;
+        }
+
+        .editor-pane {
+            width: 450px;
+            background-color: var(--panel-bg);
+            border-left: 2px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-selector {
+            display: flex;
+            overflow-x: auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .category-selector::-webkit-scrollbar {
+            height: 4px;
+        }
+        .category-selector::-webkit-scrollbar-thumb {
+            background: var(--accent-pink);
+            border-radius: 2px;
+        }
+
+        .cat-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: var(--text-light);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .cat-btn.active {
+            background: var(--accent-purple);
+            border-color: var(--accent-pink);
+        }
+
+        .options-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 20px;
+            overflow-y: auto;
+            align-content: start;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            aspect-ratio: 1;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .option-card:hover {
+            border-color: var(--accent-pink);
+            background: rgba(255, 74, 133, 0.1);
+        }
+
+        .option-card.selected {
+            border-color: var(--accent-pink);
+            background: rgba(255, 74, 133, 0.2);
+            box-shadow: inset var(--neon-glow);
+        }
+
+        .option-card img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+
+        .color-picker-section {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .color-picker-section input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .color-picker-section input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        .color-picker-section input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+
+        /* SCREEN: STUDIO */
+        #studio-screen {
+            background: #110d24;
+            flex-direction: row;
+        }
+
+        .studio-stage {
+            flex: 1;
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .studio-controls {
+            width: 300px;
+            background: var(--panel-bg);
+            border-left: 2px solid var(--accent-purple);
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .studio-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--accent-purple), #4b0082);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .studio-btn:hover {
+            filter: brightness(1.2);
+            box-shadow: var(--neon-glow);
+        }
+
+        .studio-avatar {
+            position: absolute;
+            cursor: move;
+            transform: scale(0.8);
+        }
+
+        /* Dialogue Box overlay for Studio Stories */
+        .dialogue-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            background: rgba(15, 12, 27, 0.85);
+            border: 2px solid var(--accent-pink);
+            border-radius: 12px;
+            padding: 15px 25px;
+            box-shadow: var(--neon-glow);
+            pointer-events: none;
+            display: none;
+        }
+
+        .dialogue-name {
+            color: var(--accent-pink);
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        /* SCREEN: WORLD EXPLORATION */
+        #world-screen {
+            background-size: cover;
+            background-position: center;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        #world-screen.active {
+            display: flex;
+        }
+
+        .world-header {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .world-navigation {
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 30px;
+            width: max-content;
+            margin: 0 auto 20px auto;
+        }
+
+        .location-tab {
+            padding: 8px 20px;
+            border-radius: 20px;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .location-tab.active {
+            background: var(--accent-pink);
+            box-shadow: var(--neon-glow);
+        }
+
+        .world-content {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .npc-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .npc-container:hover {
+            transform: scale(1.05);
+        }
+
+        .npc-tag {
+            background: var(--accent-purple);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border: 1px solid var(--accent-pink);
+        }
+
+        .npc-sprite {
+            width: 180px;
+            height: 250px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: bottom;
+        }
+
+        /* SCREEN: GACHA SHOP */
+        #gacha-screen {
+            background: radial-gradient(circle, #341f5c 0%, #0f0c1b 100%);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .gacha-machine {
+            width: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid var(--accent-pink);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--neon-glow);
+            backdrop-filter: blur(10px);
+        }
+
+        .gacha-display {
+            height: 200px;
+            background: #000;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 2px solid var(--accent-purple);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .gacha-display img {
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .pull-button-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .gacha-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-single {
+            background: linear-gradient(135deg, #ff4a85, #ff0055);
+        }
+
+        .btn-multi {
+            background: linear-gradient(135deg, #8a2be2, #4b0082);
+        }
+
+        .gacha-btn:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.2);
+        }
+
+        /* SCREEN: MINI GAMES */
+        #games-screen {
+            background: #16122c;
+            padding: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            overflow-y: auto;
+        }
+
+        .game-card {
+            background: var(--panel-bg);
+            border: 2px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: 0.3s;
+            height: max-content;
+        }
+
+        .game-card:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-5px);
+        }
+
+        .game-banner {
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+        }
+
+        /* Modal / Popups */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: var(--panel-bg);
+            border: 2px solid var(--accent-pink);
+            border-radius: 20px;
+            padding: 30px;
+            width: 450px;
+            text-align: center;
+            box-shadow: var(--neon-glow);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Custom Dropdown for UI */
+        select {
+            width: 100%;
+            padding: 10px;
+            background: #110922;
+            color: white;
+            border: 1px solid var(--accent-purple);
+            border-radius: 6px;
+            outline: none;
+        }
+
+        /* Animation Keyframes */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .bounce-anim {
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .gacha-spin {
+            animation: bounce 0.3s infinite linear;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>Olá, Mundo!</h1>
-    <p>Meu primeiro código em HTML.</p>
+    <header>
+        <div class="logo">⭐ ANIME GACHA STUDIO ⭐</div>
+        <div class="currency-container">
+            <div class="currency-box" id="gem-display">💎 <span>1000</span></div>
+            <div class="currency-box" id="coin-display">🪙 <span>5000</span></div>
+        </div>
+    </header>
 
+    <div id="game-container">
+        <nav id="nav-menu">
+            <button class="nav-btn active" onclick="switchScreen('customizer')">👗<span>Look</span></button>
+            <button class="nav-btn" onclick="switchScreen('studio')">🎬<span>Estúdio</span></button>
+            <button class="nav-btn" onclick="switchScreen('world')">🌍<span>Mundo</span></button>
+            <button class="nav-btn" onclick="switchScreen('gacha')">🎰<span>Gacha</span></button>
+            <button class="nav-btn" onclick="switchScreen('games')">🎮<span>Jogos</span></button>
+        </nav>
+
+        <section id="customizer-screen" class="screen active">
+            <div class="preview-pane">
+                <div class="avatar-renderer" id="main-avatar">
+                    <div class="avatar-layer" id="layer-wings" style="background-image: url('https://i.postimg.co/N0f6by0G/wings-basic.png');"></div>
+                    <div class="avatar-layer" id="layer-body" style="background-image: url('https://i.postimg.co/g2YgM6Y6/body-base.png');"></div>
+                    <div class="avatar-layer" id="layer-eyes" style="background-image: url('https://i.postimg.co/7Z6X6gqj/eyes-happy.png');"></div>
+                    <div class="avatar-layer" id="layer-hair-back" style="background-image: url('https://i.postimg.co/6qfLgH8X/hair-back-long.png');"></div>
+                    <div class="avatar-layer" id="layer-clothes" style="background-image: url('https://i.postimg.co/9f9z6f7q/outfit-school.png');"></div>
+                    <div class="avatar-layer" id="layer-hair-front" style="background-image: url('https://i.postimg.co/D08p7Yg6/hair-front-bangs.png');"></div>
+                    <div class="avatar-layer" id="layer-hat" style="background-image: url('https://i.postimg.co/656hV8XW/hat-cap.png');"></div>
+                </div>
+            </div>
+            <div class="editor-pane">
+                <div class="category-selector">
+                    <button class="cat-btn active" onclick="changeCategory('hair')">Cabelos</button>
+                    <button class="cat-btn" onclick="changeCategory('eyes')">Olhos</button>
+                    <button class="cat-btn" onclick="changeCategory('clothes')">Roupas</button>
+                    <button class="cat-btn" onclick="changeCategory('hat')">Acessórios</button>
+                    <button class="cat-btn" onclick="changeCategory('wings')">Asas</button>
+                </div>
+                <div class="options-grid" id="options-grid">
+                    </div>
+                <div class="color-picker-section">
+                    <label style="font-weight: bold;">Paleta de Cores:</label>
+                    <input type="color" id="asset-color-picker" value="#ffffff" onchange="applyColorFilter(this.value)">
+                    <span style="font-size: 13px; color: #aaa;">Mude o tom do item selecionado</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="studio-screen" class="screen">
+            <div class="studio-stage" id="studio-stage">
+                <div class="avatar-renderer studio-avatar" id="studio-char-1">
+                    </div>
+                <div class="dialogue-box" id="studio-dialogue">
+                    <div class="dialogue-name" id="dialogue-name">Avatar</div>
+                    <div id="dialogue-text">Olá mundo! Pronto para criar novas histórias?</div>
+                </div>
+            </div>
+            <div class="studio-controls">
+                <h3>Direção de Cena</h3>
+                <div>
+                    <label style="font-size: 13px; display:block; margin-bottom: 5px;">Mudar Cenário:</label>
+                    <select onchange="changeStudioBackground(this.value)">
+                        <option value="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop">Quarto Cyberpunk</option>
+                        <option value="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop">Cafeteria Neon</option>
+                        <option value="https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1200&auto=format&fit=crop">Biblioteca Mágica</option>
+                        <option value="https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop">Montanhas Fantásticas</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 13px; display:block; margin-bottom: 5px;">Expressão Facial:</label>
+                    <select onchange="changeStudioExpression(this.value)">
+                        <option value="happy">Feliz / Padrão</option>
+                        <option value="sad">Tímido / Triste</option>
+                        <option value="angry">Determinado</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 13px; display:block; margin-bottom: 5px;">Texto da Fala:</label>
+                    <input type="text" id="dialogue-input" placeholder="Digite a fala do personagem..." style="width:100%; padding:10px; border-radius:6px; border:none; background:#110922; color:white;">
+                </div>
+                <button class="studio-btn" onclick="triggerStudioDialogue()">Atualizar Balão de Fala</button>
+                <button class="studio-btn" style="background: #22c55e;" onclick="toggleDialogueBox()">Ligar/Desligar Caixa de Texto</button>
+            </div>
+        </section>
+
+        <section id="world-screen" class="screen">
+            <div class="world-navigation">
+                <button class="location-tab active" onclick="travelTo('escola')">🏫 Escola</button>
+                <button class="location-tab" onclick="travelTo('parque')">🌳 Parque</button>
+                <button class="location-tab" onclick="travelTo('cafe')">☕ Neon Café</button>
+            </div>
+            <div class="world-content">
+                <div class="npc-container bounce-anim" onclick="interactNPC('Luna')">
+                    <div class="npc-tag">Conversar com Luna ❤</div>
+                    <div class="npc-sprite" style="background-image: url('https://i.postimg.co/D08p7Yg6/hair-front-bangs.png'), url('https://i.postimg.co/9f9z6f7q/outfit-school.png'), url('https://i.postimg.co/g2YgM6Y6/body-base.png'); filter: hue-rotate(140deg);"></div>
+                </div>
+                <div class="npc-container bounce-anim" onclick="interactNPC('Kael')">
+                    <div class="npc-tag">Conversar com Kael 🛡</div>
+                    <div class="npc-sprite" style="background-image: url('https://i.postimg.co/6qfLgH8X/hair-back-long.png'), url('https://i.postimg.co/9f9z6f7q/outfit-school.png'), url('https://i.postimg.co/g2YgM6Y6/body-base.png'); filter: hue-rotate(260deg);"></div>
+                </div>
+            </div>
+            <div class="world-header">
+                <div>Local Atual: <span id="current-location-text" style="color:var(--accent-pink); font-weight:bold;">Escola Central</span></div>
+                <button class="studio-btn" style="width:auto; padding: 5px 15px;" onclick="claimDailyMission()">📋 Missão Diária</button>
+            </div>
+        </section>
+
+        <section id="gacha-screen" class="screen">
+            <h2 style="text-shadow: var(--neon-glow); color: var(--accent-pink);">Banner de Cosméticos Raros</h2>
+            <div class="gacha-machine" id="gacha-machine-box">
+                <div class="gacha-display" id="gacha-display-view">
+                    <div style="color: #666; font-style: italic;">Puxe a alavanca abaixo!</div>
+                </div>
+                <div class="pull-button-row">
+                    <button class="gacha-btn btn-single" onclick="performGacha(1, 100)">1x Pull <br><span style="font-size:12px;">💎 100</span></button>
+                    <button class="gacha-btn btn-multi" onclick="performGacha(10, 900)">10x Pull <br><span style="font-size:12px;">💎 900</span></button>
+                </div>
+            </div>
+        </section>
+
+        <section id="games-screen" class="screen">
+            <div class="game-card">
+                <div class="game-banner" style="background-image: url('https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=600&auto=format&fit=crop');"></div>
+                <h3>Estrelas Cadentes</h3>
+                <p>Colete o máximo de estrelas e cristais mágicos que caem do céu antes que o tempo acabe.</p>
+                <button class="studio-btn" onclick="openGameModal('Estrelas Cadentes')">Jogar Agora (Ganhe 🪙)</button>
+            </div>
+            <div class="game-card">
+                <div class="game-banner" style="background-image: url('https://images.unsplash.com/photo-1553481187-be93c21490a9?q=80&w=600&auto=format&fit=crop');"></div>
+                <h3>Memory Match Anime</h3>
+                <p>Encontre os pares corretos de acessórios e teste sua velocidade mental.</p>
+                <button class="studio-btn" onclick="openGameModal('Memory Match Anime')">Jogar Agora (Ganhe 🪙)</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal" id="game-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Alerta do Sistema</h2>
+            <div id="modal-body" style="margin: 20px 0; line-height: 1.6;">
+                Conteúdo dinâmico aqui.
+            </div>
+            <button class="studio-btn" onclick="closeModal()">Confirmar</button>
+        </div>
+    </div>
+
+    <script>
+        // Database simulation for cosmetic options
+        const cosmeticData = {
+            hair: [
+                { id: 'h1', name: 'Franja Tradicional', url: 'https://i.postimg.co/D08p7Yg6/hair-front-bangs.png' },
+                { id: 'h2', name: 'Longo Clássico', url: 'https://i.postimg.co/6qfLgH8X/hair-back-long.png' },
+                { id: 'h3', name: 'Corte Moderno', url: 'https://i.postimg.co/G3m8pW5p/hair-spiky.png' }
+            ],
+            eyes: [
+                { id: 'e1', name: 'Olhos Felizes', url: 'https://i.postimg.co/7Z6X6gqj/eyes-happy.png' },
+                { id: 'e2', name: 'Olhos Tímidos', url: 'https://i.postimg.co/v8Y8XGv7/eyes-sad.png' },
+                { id: 'e3', name: 'Olhos Focados', url: 'https://i.postimg.co/9fMhkf9k/eyes-determined.png' }
+            ],
+            clothes: [
+                { id: 'c1', name: 'Uniforme Escolar', url: 'https://i.postimg.co/9f9z6f7q/outfit-school.png' },
+                { id: 'c2', name: 'Traje de Gala', url: 'https://i.postimg.co/vH0HwX8w/outfit-dress.png' },
+                { id: 'c3', name: 'Visual Casual', url: 'https://i.postimg.co/wB7X7mGq/outfit-casual.png' }
+            ],
+            hat: [
+                { id: 'a1', name: 'Boné de Lado', url: 'https://i.postimg.co/656hV8XW/hat-cap.png' },
+                { id: 'a2', name: 'Laço Fofo', url: 'https://i.postimg.co/43Ym6yXp/hat-ribbon.png' }
+            ],
+            wings: [
+                { id: 'w1', name: 'Asas da Alvorada', url: 'https://i.postimg.co/N0f6by0G/wings-basic.png' },
+                { id: 'w2', name: 'Asas Sombrias', url: 'https://i.postimg.co/9M2L6W8z/wings-dark.png' }
+            ]
+        };
+
+        const locations = {
+            escola: { name: "Escola Central", bg: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1200&auto=format&fit=crop" },
+            parque: { name: "Parque das Cerejeiras", bg: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?q=80&w=1200&auto=format&fit=crop" },
+            cafe: { name: "Neon Maid Café", bg: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1200&auto=format&fit=crop" }
+        };
+
+        // Game State Variables
+        let playerWallet = { gems: 1200, coins: 3500 };
+        let activeCategory = 'hair';
+        let selections = { hair: 'h1', eyes: 'e1', clothes: 'c1', hat: 'a1', wings: 'w1' };
+        let npcFriendship = { Luna: 0, Kael: 0 };
+
+        // Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            changeCategory('hair');
+            updateWalletUI();
+            syncStudioAvatar();
+        });
+
+        // Screen Routing
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            const selectedScreen = document.getElementById(`${screenId}-screen`);
+            if (selectedScreen) selectedScreen.classList.add('active');
+            
+            // Find navigation button based on onclick attribute text
+            const targetBtn = Array.from(document.querySelectorAll('.nav-btn'))
+                .find(b => b.getAttribute('onclick').includes(screenId));
+            if (targetBtn) targetBtn.classList.add('active');
+
+            if(screenId === 'studio') {
+                syncStudioAvatar();
+            }
+        }
+
+        // Customizer Layer Logic
+        function changeCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('active');
+                if(b.textContent.toLowerCase().includes(cat === 'hat' ? 'acessórios' : cat)) {
+                    b.classList.add('active');
+                }
+            });
+            renderOptionsGrid();
+        }
+
+        function renderOptionsGrid() {
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            cosmeticData[activeCategory].forEach(item => {
+                const card = document.createElement('div');
+                card.className = `option-card ${selections[activeCategory] === item.id ? 'selected' : ''}`;
+                card.onclick = () => selectItem(activeCategory, item);
+                
+                const img = document.createElement('img');
+                img.src = item.url;
+                img.alt = item.name;
+                
+                card.appendChild(img);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectItem(category, item) {
+            selections[category] = item.id;
+            
+            // Update visual layer mapped element target
+            let targetLayerId = `layer-${category}`;
+            if(category === 'hair') targetLayerId = 'layer-hair-front'; // prioritize UI feedback representation
+            
+            const element = document.getElementById(targetLayerId);
+            if(element) element.style.backgroundImage = `url('${item.url}')`;
+            
+            renderOptionsGrid();
+        }
+
+        function applyColorFilter(colorHex) {
+            // Apply CSS filter adjustment to hue layer simulation
+            const frontHair = document.getElementById('layer-hair-front');
+            const backHair = document.getElementById('layer-hair-back');
+            
+            if(activeCategory === 'hair') {
+                // Approximate hex conversion map simulation hook
+                frontHair.style.filter = `drop-shadow(0px 0px 1px ${colorHex})`;
+                backHair.style.filter = `drop-shadow(0px 0px 1px ${colorHex})`;
+            }
+        }
+
+        // Studio Scripting Engine Actions
+        function syncStudioAvatar() {
+            const original = document.getElementById('main-avatar');
+            const cloneTarget = document.getElementById('studio-char-1');
+            cloneTarget.innerHTML = original.innerHTML;
+            makeElementDraggable(cloneTarget);
+        }
+
+        function changeStudioBackground(bgUrl) {
+            document.getElementById('studio-stage').style.backgroundImage = `url('${bgUrl}')`;
+        }
+
+        function changeStudioExpression(expr) {
+            const eyeLayer = document.querySelector('#studio-char-1 #layer-eyes');
+            if(!eyeLayer) return;
+            
+            if(expr === 'happy') eyeLayer.style.backgroundImage = `url('${cosmeticData.eyes[0].url}')`;
+            if(expr === 'sad') eyeLayer.style.backgroundImage = `url('${cosmeticData.eyes[1].url}')`;
+            if(expr === 'angry') eyeLayer.style.backgroundImage = `url('${cosmeticData.eyes[2].url}')`;
+        }
+
+        function triggerStudioDialogue() {
+            const textStr = document.getElementById('dialogue-input').value;
+            if(!textStr) return;
+            document.getElementById('dialogue-text').textContent = textStr;
+            document.getElementById('studio-dialogue').style.display = 'block';
+        }
+
+        function toggleDialogueBox() {
+            const box = document.getElementById('studio-dialogue');
+            box.style.display = box.style.display === 'none' || box.style.display === '' ? 'block' : 'none';
+        }
+
+        // Draggable script for Studio mechanics
+        function makeElementDraggable(elmnt) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            elmnt.onmousedown = dragMouseDown;
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        // World Mechanics Exploration
+        function travelTo(locKey) {
+            document.querySelectorAll('.location-tab').forEach(b => b.classList.remove('active'));
+            // Find target tab based on onclick string pattern matching evaluation parameter safely
+            const clickedBtn = Array.from(document.querySelectorAll('.location-tab'))
+                .find(b => b.getAttribute('onclick').includes(locKey));
+            if(clickedBtn) clickedBtn.classList.add('active');
+
+            const data = locations[locKey];
+            document.getElementById('world-screen').style.backgroundImage = `url('${data.bg}')`;
+            document.getElementById('current-location-text').textContent = data.name;
+        }
+
+        function interactNPC(npcName) {
+            npcFriendship[npcName] += 10;
+            openModal(`Interação com ${npcName}`, `Você conversou e passou um tempo incrível com ${npcName}! <br><br><strong>Nível de Amizade +10</strong> (Atual: ${npcFriendship[npcName]} pts). <br>Ganhou recompensa de exploração: 🪙 50 Moedas!`);
+            playerWallet.coins += 50;
+            updateWalletUI();
+        }
+
+        function claimDailyMission() {
+            openModal("Missão Diária Concluída!", "Você patrulhou os locais seguros da cidade e conversou com os moradores locais.<br><br><strong>Recompensa:</strong> 💎 150 Cristais Gacha!");
+            playerWallet.gems += 150;
+            updateWalletUI();
+        }
+
+        // Gacha Machine Logic Mechanics
+        function performGacha(pulls, cost) {
+            if(playerWallet.gems < cost) {
+                openModal("Saldo Insuficiente", "Você não tem Cristais 💎 suficientes para realizar esta invocação gacha. Complete missões diárias ou minijogos!");
+                return;
+            }
+
+            playerWallet.gems -= cost;
+            updateWalletUI();
+
+            const machineBox = document.getElementById('gacha-machine-box');
+            const display = document.getElementById('gacha-display-view');
+            
+            machineBox.classList.add('gacha-spin');
+            display.innerHTML = `<div style="color: var(--accent-pink); font-weight: bold; font-size: 20px;">Invocando Cápsula...</div>`;
+
+            setTimeout(() => {
+                machineBox.classList.remove('gacha-spin');
+                
+                // Get complete item randomizer draw simulation
+                const pools = ['hair', 'eyes', 'clothes', 'hat', 'wings'];
+                const randomPool = pools[Math.floor(Math.random() * pools.length)];
+                const randomItem = cosmeticData[randomPool][Math.floor(Math.random() * cosmeticData[randomPool].length)];
+
+                display.innerHTML = `
+                    <div style="text-align:center;">
+                        <div style="color: #ffd700; font-weight:bold; margin-bottom: 5px;">★ NOVO ITEM DESBLOQUEADO ★</div>
+                        <img src="${randomItem.url}" style="height:110px;"><br>
+                        <span style="color:white; font-size:14px;">${randomItem.name} (${randomPool.toUpperCase()})</span>
+                    </div>
+                `;
+                
+                // Hook to notify item add mechanics safely
+            }, 1200);
+        }
+
+        // Minigames Simulator Engine Execution
+        function openGameModal(gameName) {
+            openModal(`Executando: ${gameName}`, `Você jogou com maestria e obteve excelente pontuação!<br><br><strong>Recompensa de Desempenho:</strong> 🪙 300 Moedas de Ouro.`);
+            playerWallet.coins += 300;
+            updateWalletUI();
+        }
+
+        // UI Core Updates
+        function updateWalletUI() {
+            document.querySelector('#gem-display span').textContent = playerWallet.gems;
+            document.querySelector('#coin-display span').textContent = playerWallet.coins;
+        }
+
+        // System Modals
+        function openModal(title, bodyHtml) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').innerHTML = bodyHtml;
+            document.getElementById('game-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('game-modal').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
