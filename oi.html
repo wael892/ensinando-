@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treinamento Intensivo: Tema 1</title>
+    <title>Treinamento Intensivo: Tema 3</title>
     <style>
         :root {
-            --primary: #1e3799;
-            --secondary: #4a69bd;
-            --success: #78e08f;
-            --error: #eb2f06;
-            --dark: #2f3542;
-            --light: #f1f2f6;
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --success: #00b894;
+            --error: #d63031;
+            --dark: #2d3436;
+            --light: #dfe6e9;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
@@ -72,7 +72,6 @@
             font-size: 1.1rem;
         }
 
-        /* Estilo dos Exercícios */
         .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
         .option-btn {
             background: var(--light);
@@ -84,7 +83,7 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .option-btn:hover { border-color: var(--secondary); background: #e8ecf8; }
+        .option-btn:hover { border-color: var(--secondary); background: #f1f2f6; }
         
         .feedback {
             margin-top: 15px;
@@ -123,192 +122,202 @@
 
     <div class="slide-container">
         
+        <!-- INTRODUÇÃO -->
         <div class="slide active">
             <div style="text-align: center; margin: auto;">
-                <h1 style="border: none; font-size: 2.8rem;">Foco Total: Tema 1</h1>
-                <p style="color: var(--secondary); font-weight: bold; font-size: 1.4rem;">Saúde, Doença e Patologia</p>
+                <h1 style="border: none; font-size: 2.8rem;">Foco Total: Tema 3</h1>
+                <p style="color: var(--secondary); font-weight: bold; font-size: 1.4rem;">Distúrbios Pigmentares e Calcificações</p>
                 <div class="highlight-box" style="border: none; text-align: left;">
-                    💡 <strong>Método Micro-Learning:</strong> Você vai passar por 3 níveis rápidos de conhecimento. Cada nível tem sua teoria direta e 3 testes imediatos para garantir que você entendeu.
+                    ⚡ <strong>Foco no Acúmulo Tecidual:</strong> Vamos dissecar as pigmentações endógenas/exógenas e as duas formas clínicas de calcificação patológica. 3 níveis diretos e rápidos.
                 </div>
-                <p style="margin-top: 20px; font-size: 1rem; color: #7f8c8d;">Use as setas abaixo para iniciar o Nível 1.</p>
+                <p style="margin-top: 20px; font-size: 1rem; color: #7f8c8d;">Pressione a seta para iniciar o Nível 1.</p>
             </div>
         </div>
 
+        <!-- NÍVEL 1: TEORIA -->
         <div class="slide">
             <div class="badge">Nível 1: Teoria</div>
-            <h1>Saúde vs. Doença</h1>
-            <p>O organismo humano funciona como uma máquina perfeitamente regulada.</p>
+            <h1>Pigmentos Endógenos</h1>
+            <p>São substâncias com cor própria produzidas pelo **nosso próprio organismo**.</p>
             <div class="highlight-box">
-                <strong>Homeostase (Saúde):</strong> É o equilíbrio dinâmico e constante do corpo. As células trabalham na temperatura ideal, pH correto e com energia suficiente.
-            </div>
-            <div class="highlight-box" style="border-color: var(--error)">
-                <strong>Doença:</strong> É a perda ou quebra dessa homeostase. Ocorre quando o corpo falha em se adaptar ou neutralizar um estímulo estressante.
+                📌 <strong>Melanina:</strong> Produzida nos melanócitos para proteção UV. Seus distúrbios podem ser locais (melasma) ou generalizados.<br><br>
+                📌 <strong>Hemossiderina:</strong> Pigmento dourado/castanho derivado da quebra da hemoglobina (comum em hematomas e hemorragias locais).<br><br>
+                📌 <strong>Lipofuscina:</strong> O pigmento do "desgaste celular". Acumula-se em células velhas (coração, fígado) devido à oxidação de lipídeos.
             </div>
         </div>
 
+        <!-- NÍVEL 1: QUESTÃO 1 -->
         <div class="slide">
             <div class="badge">Nível 1: Questão Fatos</div>
-            <p><strong>Q1. Qual termo define o equilíbrio dinâmico e ideal das funções do organismo?</strong></p>
+            <p><strong>Q1. Qual das alternativas abaixo representa um pigmento intracelular conhecido por indicar o envelhecimento ou desgaste celular?</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Patogênese</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Homeostase</button>
-                <button class="option-btn" onclick="checkAns(this, false)">C) Adaptação Celular</button>
+                <button class="option-btn" onclick="checkAns(this, false)">A) Melanina</button>
+                <button class="option-btn" onclick="checkAns(this, true)">B) Lipofuscina</button>
+                <button class="option-btn" onclick="checkAns(this, false)">C) Antracose</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- NÍVEL 1: QUESTÃO 2 -->
         <div class="slide">
             <div class="badge">Nível 1: Questão Análise</div>
-            <p><strong>Q2. Quando dizemos que um paciente desenvolveu uma doença, o que aconteceu biologicamente com suas células?</strong></p>
+            <p><strong>Q2. Após uma pancada forte no braço, a pele fica roxa, depois esverdeada e finalmente amarelada antes de sumir. Biologicamente, qual pigmento derivado do ferro gerou essa coloração tecidual?</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Houve uma falha nos mecanismos adaptativos, quebrando a homeostase.</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) As células mudaram de função apenas por vontade própria, sem estímulos.</button>
-                <button class="option-btn" onclick="checkAns(this, false)">C) O organismo manteve o equilíbrio ideal intacto.</button>
+                <button class="option-btn" onclick="checkAns(this, true)">A) Hemossiderina</button>
+                <button class="option-btn" onclick="checkAns(this, false)">B) Antracose pulmonar</button>
+                <button class="option-btn" onclick="checkAns(this, false)">C) Melanina epidérmica</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- NÍVEL 1: QUESTÃO 3 -->
         <div class="slide">
             <div class="badge">Nível 1: Questão Avançada</div>
-            <p><strong>Q3. A Homeostase é considerada "estática" ou "dinâmica"? Por quê?</strong></p>
+            <p><strong>Q3. Em um laboratório, o aumento localizado de melanina na pele (como sardas ou melasma) difere do aumento generalizado porque o generalizado está comumente associado a:</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Estática, porque o corpo nunca altera seus parâmetros moleculares.</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Dinâmica, porque o corpo se ajusta constantemente para manter o equilíbrio estável.</button>
+                <button class="option-btn" onclick="checkAns(this, false)">A) Trauma puramente mecânico no local da pele.</button>
+                <button class="option-btn" onclick="checkAns(this, true)">B) Estímulos hormonais ou metabólicos sistêmicos.</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- NÍVEL 2: TEORIA -->
         <div class="slide">
             <div class="badge">Nível 2: Teoria</div>
-            <h1>Os 4 Pilares da Patologia</h1>
-            <p>Para desvendar qualquer processo patológico, a ciência se apoia em 4 conceitos fundamentais:</p>
+            <h1>Pigmentos Exógenos</h1>
+            <p>São substâncias coloridas que vêm do **meio externo**, fagocitadas por células de defesa que não conseguem digeri-las.</p>
             <ul>
-                <li><strong>1. Etiologia:</strong> É a causa primária (Ex: O vírus da gripe).</li>
-                <li><strong>2. Patogênese:</strong> O mecanismo, o passo a passo de como a causa gera a doença.</li>
-                <li><strong>3. Alteração Morfológica:</strong> As mudanças físicas/estruturais nas células ou órgãos.</li>
-                <li><strong>4. Fisiopatologia:</strong> O distúrbio funcional que gera os sintomas clínicos.</li>
+                <li><strong>1. Via Inoculação (Tatuagem):</strong> A tinta é injetada na derme e aprisionada de forma permanente dentro dos macrófagos.</li>
+                <li><strong>2. Via Inalação (Antracose):</strong> Poeira de carvão ou poluição inalada acumulando-se nos alvéolos e linfonodos pulmonares (deixando o pulmão com pontilhados pretos).</li>
+                <li><strong>3. Via Ingestão:</strong> Absorção de metais pesados pela alimentação ou medicamentos (Ex: Argiria por prata).</li>
             </ul>
         </div>
 
+        <!-- NÍVEL 2: QUESTÃO 1 -->
         <div class="slide">
             <div class="badge">Nível 2: Questão Fatos</div>
-            <p><strong>Q4. Se um laboratório investiga a Causa de uma nova infecção bacteriana, qual pilar da patologia está sendo estudado?</strong></p>
+            <p><strong>Q4. O acúmulo de partículas de carvão e fuligem nos pulmões de moradores de grandes metrópoles é um distúrbio exógeno chamado de:</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Etiologia</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) Fisiopatologia</button>
-                <button class="option-btn" onclick="checkAns(this, false)">C) Morfologia</button>
+                <button class="option-btn" onclick="checkAns(this, false)">A) Hemocromatose</button>
+                <button class="option-btn" onclick="checkAns(this, true)">B) Antracose</button>
+                <button class="option-btn" onclick="checkAns(this, false)">C) Calcificação Distrófica</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- NÍVEL 2: QUESTÃO 2 -->
         <div class="slide">
             <div class="badge">Nível 2: Questão Análise</div>
-            <p><strong>Q5. Um infarto deixa o músculo cardíaco pálido e rígido. A visualização dessas alterações estruturais pertence a qual pilar?</strong></p>
+            <p><strong>Q5. Por que os pigmentos de uma tatuagem permanecem na pele por anos sem sumir, mesmo com a renovação da epiderme?</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Patogênese</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Alterações Morfológicas</button>
-                <button class="option-btn" onclick="checkAns(this, false)">C) Etiologia</button>
+                <button class="option-btn" onclick="checkAns(this, false)">A) Porque a tinta destrói todas as células ao redor.</button>
+                <button class="option-btn" onclick="checkAns(this, true)">B) Porque o pigmento fica na derme profunda, fagocitado por macrófagos estáveis que não conseguem degradá-lo.</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- NÍVEL 2: QUESTÃO 3 -->
         <div class="slide">
             <div class="badge">Nível 2: Questão Avançada</div>
-            <p><strong>Q6. Qual é a diferença crucial entre Patogênese e Fisiopatologia?</strong></p>
+            <p><strong>Q6. No diagnóstico histopatológico, pigmentos exógenos inalados e fagocitados são transportados preferencialmente para qual estrutura de drenagem imunológica?</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Patogênese é o processo de desenvolvimento da lesão; Fisiopatologia são as consequências funcionais/sintomas.</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) São sinônimos perfeitos que tratam apenas da anatomia macroscópica.</button>
+                <button class="option-btn" onclick="checkAns(this, true)">A) Linfonodos regionais (satélites)</button>
+                <button class="option-btn" onclick="checkAns(this, false)">B) Válvulas cardíacas esquerdas</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- NÍVEL 3: TEORIA -->
         <div class="slide">
             <div class="badge">Nível 3: Teoria</div>
-            <h1>Estímlos e Agressores</h1>
-            <p>Qualquer fator que tire a célula do seu estado normal é um estímulo. Se for muito intenso, torna-se uma <strong>agressão</strong>.</p>
-            <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top:10px;">
-                <div style="background: #e8ecf8; padding: 15px; border-radius: 8px;">
-                    <strong>Agressores Externos:</strong>
-                    <p style="font-size:1rem;">Fatores do ambiente: Calor/frio extremo, vírus, bactérias, venenos, traumas físicos.</p>
-                </div>
-                <div style="background: #fce8e6; padding: 15px; border-radius: 8px;">
-                    <strong>Agressores Internos:</strong>
-                    <p style="font-size:1rem;">Originados no próprio corpo: Mutações genéticas e ataques autoimunes (Ex: Lúpus).</p>
-                </div>
+            <h1>Calcificação Patológica</h1>
+            <p>Deposição anormal de sais de cálcio em tecidos moles do organismo. Divide-se em duas formas cruciais:</p>
+            <div class="highlight-box" style="border-left-color: var(--error)">
+                ⚠️ <strong>Calcificação Distrófica:</strong> Ocorre em tecidos que já sofreram **lesão ou necrose** (Ex: placas de aterosclerose, válvulas cardíacas velhas). Os níveis de cálcio no sangue estão **normais**.
+            </div>
+            <div class="highlight-box" style="border-left-color: var(--success)">
+                ⚠️ <strong>Calcificação Metastática:</strong> Ocorre em tecidos **normais/saudáveis** devido a uma **Hipercalcemia** (excesso de cálcio circulante no sangue por hiperparatireoidismo ou destruição óssea).
             </div>
         </div>
 
+        <!-- NÍVEL 3: QUESTÃO 1 -->
         <div class="slide">
             <div class="badge">Nível 3: Questão Fatos</div>
-            <p><strong>Q7. Radiação solar extrema e queimaduras térmicas são classificadas como agentes agressores de qual natureza?</strong></p>
+            <p><strong>Q7. Uma calcificação que acontece na parede de uma artéria lesionada por aterosclerose, em um paciente com exames de cálcio sérico normais, é do tipo:</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Internos / Genéticos</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Externos / Físicos</button>
-                <button class="option-btn" onclick="checkAns(this, false)">C) Internos / Autoimunes</button>
+                <button class="option-btn" onclick="checkAns(this, true)">A) Distrófica</button>
+                <button class="option-btn" onclick="checkAns(this, false)">B) Metastática</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- NÍVEL 3: QUESTÃO 2 -->
         <div class="slide">
             <div class="badge">Nível 3: Questão Análise</div>
-            <p><strong>Q8. Nas doenças autoimunes, o sistema de defesa do corpo ataca tecidos saudáveis. Esse tipo de agressão é classificado como:</strong></p>
+            <p><strong>Q8. Um paciente com tumor na tireoide desenvolveu hipercalcemia extrema. Raios-X mostraram calcificações nos rins sadios. Qual o diagnóstico desse processo?</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Agressão Interna</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) Agressão Exógena Pura</button>
+                <button class="option-btn" onclick="checkAns(this, false)">A) Calcificação Distrófica por necrose</button>
+                <button class="option-btn" onclick="checkAns(this, true)">B) Calcificação Metastática por hipercalcemia</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- NÍVEL 3: QUESTÃO 3 -->
         <div class="slide">
             <div class="badge">Nível 3: Questão Avançada</div>
-            <p><strong>Q9. O que dita se um estímulo comum vai se tornar uma agressão patológica no organismo?</strong></p>
+            <p><strong>Q9. Como são chamadas as concreções ou pedras formadas por deposição de sais minerais em órgãos ocos ou ductos (como rins e vesícula)?</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Apenas a vontade consciente do indivíduo.</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) A intensidade do estímulo e o tempo de exposição da célula a ele.</button>
+                <button class="option-btn" onclick="checkAns(this, false)">A) Metaplasias</button>
+                <button class="option-btn" onclick="checkAns(this, true)">B) Litíases ou Cálculos</button>
+                <button class="option-btn" onclick="checkAns(this, false)">C) Necroses caseosas</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- DESAFIO FINAL: QUESTÃO 1 -->
         <div class="slide">
-            <div class="badge" style="background: #f1c40f; color:#000;">Desafio Mix: Nível Master</div>
-            <p><strong>Q10. Uma mutação genética (agressão interna) altera o formato das hemácias, impedindo o fluxo normal de oxigênio e causando cansaço severo no paciente. Quais pilares e conceitos aparecem aqui na ordem correta?</strong></p>
+            <div class="badge" style="background: #f1c40f; color:#000;">Desafio Mix: Master</div>
+            <p><strong>Q10. Se as células do miocárdio de um idoso apresentam grânulos castanhos ao redor do núcleo sem histórico de infarto, e suas artérias coronárias apresentam pontos rígidos de cálcio com exames de sangue normais, quais são os achados?</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Mutação (Etiologia) -> Alteração do formato (Morfologia) -> Cansaço (Fisiopatologia).</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) Cansaço (Etiologia) -> Mutação (Morfologia) -> Formato (Fisiopatologia).</button>
+                <button class="option-btn" onclick="checkAns(this, true)">A) Lipofuscina no miocárdio e Calcificação Distrófica nas coronárias.</button>
+                <button class="option-btn" onclick="checkAns(this, false)">B) Hemossiderina no miocárdio e Calcificação Metastática nas coronárias.</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- DESAFIO FINAL: QUESTÃO 2 -->
         <div class="slide">
-            <div class="badge" style="background: #f1c40f; color:#000;">Desafio Mix: Nível Master</div>
-            <p><strong>Q11. Se as respostas de defesa do organismo contra uma agressão externa forem exageradas e desreguladas, o que acontece?</strong></p>
+            <div class="badge" style="background: #f1c40f; color:#000;">Desafio Mix: Master</div>
+            <p><strong>Q11. Por que a necrose celular (morte por agressão severa) atua frequentemente como gatilho para a calcificação distrófica?</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) O corpo atinge a homeostase de forma mais rápida e segura.</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) A própria resposta de defesa vira um agente agressor interno, gerando novas lesões.</button>
+                <button class="option-btn" onclick="checkAns(this, true)">A) Porque as membranas rompidas liberam fosfatos que se ligam ao cálcio citoplasmático, iniciando a cristalização.</button>
+                <button class="option-btn" onclick="checkAns(this, false)">B) Porque a necrose aumenta o cálcio livre em todo o fluxo sanguíneo.</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- DESAFIO FINAL: QUESTÃO 3 -->
         <div class="slide">
-            <div class="badge" style="background: #f1c40f; color:#000;">Desafio Mix: Nível Master</div>
-            <p><strong>Q12. O processo patológico é considerado uma estrutura estática ou dinâmica?</strong></p>
+            <div class="badge" style="background: #f1c40f; color:#000;">Desafio Mix: Master</div>
+            <p><strong>Q12. Qual a principal diferença laboratorial e diagnóstica na avaliação clínica entre as duas calcificações patológicas?</strong></p>
             <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Dinâmica, pois as lesões evoluem, mudando seus aspectos morfológicos e funcionais com o tempo.</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) Estática, pois uma lesão mantém exatamente as mesmas propriedades do início até o óbito.</button>
+                <button class="option-btn" onclick="checkAns(this, false)">A) A distrófica necessita de mutação genética ativa e a metastática não.</button>
+                <button class="option-btn" onclick="checkAns(this, true)">B) A metastática cursa obrigatoriamente com alteração nos níveis de cálcio sérico (hipercalcemia); a distrófica mantém o cálcio sanguíneo normal.</button>
             </div>
             <div class="feedback"></div>
         </div>
 
+        <!-- TELA FINAL -->
         <div class="slide">
             <div style="text-align: center; margin: auto;">
-                <h1 style="border: none; font-size: 3rem; color: var(--success);">🏆 Tema 1 Concluído!</h1>
-                <p style="font-size: 1.3rem; margin-bottom: 20px;">Você passou por todos os níveis de fixação ativa.</p>
+                <h1 style="border: none; font-size: 3rem; color: var(--success);">🏆 Tema 3 Concluído!</h1>
+                <p style="font-size: 1.3rem; margin-bottom: 20px;">Você dominou os Distúrbios Pigmentares e Calcificações.</p>
                 <div class="highlight-box" style="border-color: var(--success); text-align: left;">
-                    ✅ Domínio de Homeostase<br>
-                    ✅ Fixação dos 4 Pilares da Patologia<br>
-                    ✅ Diferenciação de Agressores Internos e Externos
+                    ✅ Pigmentos Endógenos (Melanina, Hemossiderina, Lipofuscina)<br>
+                    ✅ Pigmentos Exógenos (Tatuagem e Antracose)<br>
+                    ✅ Calcificação Distrófica vs. Metastática (O divisor de águas)
                 </div>
-                <p>Pronto para avançar para o próximo bloco quando quiser!</p>
+                <p>Pronto para o próximo bloco sempre que quiser avançar!</p>
             </div>
         </div>
 
@@ -316,11 +325,11 @@
 
     <div class="controls">
         <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>Anterior</button>
-        <span class="progress-indicator" id="progressText">Slide 1 de 14</span>
+        <span class="progress-indicator" id="progressText">Etapa 1 de 14</span>
         <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Próximo</button>
     </div>
 
-    <script>
+    <script {
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const prevBtn = document.getElementById('prevBtn');
@@ -344,15 +353,14 @@
             const feedback = btn.parentElement.nextElementSibling;
             const allButtons = btn.parentElement.querySelectorAll('.option-btn');
             
-            // Desabilita botões após clicar
             allButtons.forEach(b => b.disabled = true);
 
             if(isCorrect) {
-                feedback.innerText = "🎯 Correto! Excelente análise.";
+                feedback.innerText = "🎯 Correto! Fixação perfeita.";
                 feedback.className = "feedback correct";
                 btn.style.background = "#78e08f";
             } else {
-                feedback.innerText = "❌ Incorreto. Pense na relação de causa, efeito ou equilíbrio.";
+                feedback.innerText = "❌ Incorreto. Lembre-se das regras do cálcio e das cores dos depósitos.";
                 feedback.className = "feedback wrong";
                 btn.style.background = "#eb2f06";
                 btn.style.color = "white";
