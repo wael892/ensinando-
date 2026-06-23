@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treinamento Intensivo: Tema 3</title>
+    <title>Desafio Numérico - Patologia Geral</title>
     <style>
         :root {
-            --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --success: #00b894;
-            --error: #d63031;
-            --dark: #2d3436;
-            --light: #dfe6e9;
+            --primary: #2980b9;
+            --secondary: #3498db;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #27ae60;
+            --error: #c0392b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
@@ -27,52 +27,53 @@
             overflow: hidden;
         }
 
-        .slide-container {
+        .game-container {
             width: 90%;
-            max-width: 850px;
+            max-width: 800px;
             height: 80vh;
             background: white;
             border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            position: relative;
             display: flex;
             flex-direction: column;
-            padding: 40px;
+            padding: 35px;
+            position: relative;
         }
 
-        .slide { display: none; flex-direction: column; height: 100%; animation: slideIn 0.3s ease; }
-        .slide.active { display: flex; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
+        .header {
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .badge {
-            background: var(--primary);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            align-self: flex-start;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
+        .title { color: var(--primary); font-size: 1.4rem; font-weight: bold; }
+        .score { font-weight: bold; font-size: 1.1rem; color: var(--primary); }
 
-        h1 { color: var(--primary); margin-bottom: 20px; font-size: 2rem; border-bottom: 2px solid var(--light); padding-bottom: 10px; }
-        p { font-size: 1.2rem; line-height: 1.6; margin-bottom: 15px; }
-
-        .highlight-box {
-            background: var(--light);
-            padding: 20px;
+        .definition-box {
+            flex-grow: 1;
+            font-size: 1.25rem;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: #f8f9fa;
+            padding: 25px;
             border-radius: 8px;
             border-left: 6px solid var(--primary);
-            margin: 15px 0;
-            font-size: 1.1rem;
+            margin-bottom: 25px;
         }
 
-        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
         .option-btn {
             background: var(--light);
             border: 2px solid #ddd;
@@ -80,299 +81,226 @@
             border-radius: 8px;
             text-align: left;
             font-size: 1.1rem;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
+            width: 100%;
         }
-        .option-btn:hover { border-color: var(--secondary); background: #f1f2f6; }
-        
+
+        .option-btn:hover:not(:disabled) { 
+            border-color: var(--secondary); 
+            background: #e8ecf8; 
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            display: none;
+            text-align: center;
+        }
+
+        .btn-next:hover { background: #2171a3; }
+
         .feedback {
-            margin-top: 15px;
             padding: 12px;
             border-radius: 6px;
             font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
             display: none;
+            font-size: 1.1rem;
         }
         .feedback.correct { background: #d4edda; color: #155724; display: block; }
         .feedback.wrong { background: #f8d7da; color: #721c24; display: block; }
 
-        .controls {
-            display: flex;
-            justify-content: space-between;
+        .final-screen {
+            display: none;
+            flex-direction: column;
             align-items: center;
-            width: 90%;
-            max-width: 850px;
-            margin-top: 20px;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
         }
-
-        button.nav-btn {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 12px 28px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        button.nav-btn:disabled { background: #ccc; cursor: not-allowed; }
-        .progress-indicator { color: white; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
-    <div class="slide-container">
-        
-        <!-- INTRODUÇÃO -->
-        <div class="slide active">
-            <div style="text-align: center; margin: auto;">
-                <h1 style="border: none; font-size: 2.8rem;">Foco Total: Tema 3</h1>
-                <p style="color: var(--secondary); font-weight: bold; font-size: 1.4rem;">Distúrbios Pigmentares e Calcificações</p>
-                <div class="highlight-box" style="border: none; text-align: left;">
-                    ⚡ <strong>Foco no Acúmulo Tecidual:</strong> Vamos dissecar as pigmentações endógenas/exógenas e as duas formas clínicas de calcificação patológica. 3 níveis diretos e rápidos.
-                </div>
-                <p style="margin-top: 20px; font-size: 1rem; color: #7f8c8d;">Pressione a seta para iniciar o Nível 1.</p>
-            </div>
+    <div class="game-container" id="gameBox">
+        <div class="header">
+            <div class="title" id="moduleTitle">Módulo</div>
+            <div class="score" id="scoreText">Termo 1 de 40</div>
         </div>
 
-        <!-- NÍVEL 1: TEORIA -->
-        <div class="slide">
-            <div class="badge">Nível 1: Teoria</div>
-            <h1>Pigmentos Endógenos</h1>
-            <p>São substâncias com cor própria produzidas pelo **nosso próprio organismo**.</p>
-            <div class="highlight-box">
-                📌 <strong>Melanina:</strong> Produzida nos melanócitos para proteção UV. Seus distúrbios podem ser locais (melasma) ou generalizados.<br><br>
-                📌 <strong>Hemossiderina:</strong> Pigmento dourado/castanho derivado da quebra da hemoglobina (comum em hematomas e hemorragias locais).<br><br>
-                📌 <strong>Lipofuscina:</strong> O pigmento do "desgaste celular". Acumula-se em células velhas (coração, fígado) devido à oxidação de lipídeos.
+        <div id="playArea" style="display: flex; flex-direction: column; height: 100%;">
+            <div class="definition-box" id="definitionText">
+                Carregando treino dinâmico...
             </div>
+
+            <div class="feedback" id="feedbackBox"></div>
+
+            <div class="options-container" id="optionsBox"></div>
+            
+            <button class="btn-next" id="nextBtn" onclick="nextTerm()">Aperte ENTER ou ESPAÇO para ir ao Próximo Termo ➔</button>
         </div>
 
-        <!-- NÍVEL 1: QUESTÃO 1 -->
-        <div class="slide">
-            <div class="badge">Nível 1: Questão Fatos</div>
-            <p><strong>Q1. Qual das alternativas abaixo representa um pigmento intracelular conhecido por indicar o envelhecimento ou desgaste celular?</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Melanina</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Lipofuscina</button>
-                <button class="option-btn" onclick="checkAns(this, false)">C) Antracose</button>
-            </div>
-            <div class="feedback"></div>
+        <div class="final-screen" id="endArea">
+            <h1 style="color: var(--success); font-size: 2.5rem; margin-bottom: 15px;">🏆 Treino de Termos Concluído!</h1>
+            <p style="font-size: 1.3rem; margin-bottom: 25px;">Fixação total atingida com comandos rápidos de teclado.</p>
+            <button class="option-btn" style="max-width: 250px; text-align: center; background: var(--success); color: white; border: none;" onclick="location.reload()">Gabaritar Novamente</button>
         </div>
-
-        <!-- NÍVEL 1: QUESTÃO 2 -->
-        <div class="slide">
-            <div class="badge">Nível 1: Questão Análise</div>
-            <p><strong>Q2. Após uma pancada forte no braço, a pele fica roxa, depois esverdeada e finalmente amarelada antes de sumir. Biologicamente, qual pigmento derivado do ferro gerou essa coloração tecidual?</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Hemossiderina</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) Antracose pulmonar</button>
-                <button class="option-btn" onclick="checkAns(this, false)">C) Melanina epidérmica</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- NÍVEL 1: QUESTÃO 3 -->
-        <div class="slide">
-            <div class="badge">Nível 1: Questão Advanced</div>
-            <p><strong>Q3. Em um laboratório, o aumento localizado de melanina na pele (como sardas ou melasma) difere do aumento generalizado porque o generalizado está comumente associado a:</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Trauma puramente mecânico no local da pele.</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Estímulos hormonais ou metabólicos sistêmicos.</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- NÍVEL 2: TEORIA -->
-        <div class="slide">
-            <div class="badge">Nível 2: Teoria</div>
-            <h1>Pigmentos Exógenos</h1>
-            <p>São substâncias coloridas que vêm do **meio externo**, fagocitadas por células de defesa que não conseguem digeri-las.</p>
-            <ul>
-                <li><strong>1. Via Inoculação (Tatuagem):</strong> A tinta é injetada na derme e aprisionada de forma permanente dentro dos macrófagos.</li>
-                <li><strong>2. Via Inalação (Antracose):</strong> Poeira de carvão ou poluição inalada acumulando-se nos alvéolos e linfonodos pulmonares (deixando o pulmão com pontilhados pretos).</li>
-                <li><strong>3. Via Ingestão:</strong> Absorção de metais pesados pela alimentação ou medicamentos (Ex: Argiria por prata).</li>
-            </ul>
-        </div>
-
-        <!-- NÍVEL 2: QUESTÃO 1 -->
-        <div class="slide">
-            <div class="badge">Nível 2: Questão Fatos</div>
-            <p><strong>Q4. O acúmulo de partículas de carvão e fuligem nos pulmões de moradores de grandes metrópoles é um distúrbio exógeno chamado de:</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Hemocromatose</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Antracose</button>
-                <button class="option-btn" onclick="checkAns(this, false)">C) Calcificação Distrófica</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- NÍVEL 2: QUESTÃO 2 -->
-        <div class="slide">
-            <div class="badge">Nível 2: Questão Análise</div>
-            <p><strong>Q5. Por que os pigmentos de uma tatuagem permanecem na pele por anos sem sumir, mesmo com a renovação da epiderme?</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Porque a tinta destrói todas as células ao redor.</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Porque o pigmento fica na derme profunda, fagocitado por macrófagos estáveis que não conseguem degradá-lo.</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- NÍVEL 2: QUESTÃO 3 -->
-        <div class="slide">
-            <div class="badge">Nível 2: Questão Advanced</div>
-            <p><strong>Q6. No diagnóstico histopatológico, pigmentos exógenos inalados e fagocitados são transportados preferencialmente para qual estrutura de drenagem imunológica?</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Linfonodos regionais (satélites)</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) Válvulas cardíacas esquerdas</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- NÍVEL 3: TEORIA -->
-        <div class="slide">
-            <div class="badge">Nível 3: Teoria</div>
-            <h1>Calcificação Patológica</h1>
-            <p>Deposição anormal de sais de cálcio em tecidos moles do organismo. Divide-se em duas formas cruciais:</p>
-            <div class="highlight-box" style="border-left-color: var(--error)">
-                ⚠️ <strong>Calcificação Distrófica:</strong> Ocorre em tecidos que já sofreram **lesão ou necrose** (Ex: placas de aterosclerose, válvulas cardíacas velhas). Os níveis de cálcio no sangue estão **normais**.
-            </div>
-            <div class="highlight-box" style="border-left-color: var(--success)">
-                ⚠️ <strong>Calcificação Metastática:</strong> Ocorre em tecidos **normais/saudáveis** devido a uma **Hipercalcemia** (excesso de cálcio circulante no sangue por hiperparatireoidismo ou destruição óssea).
-            </div>
-        </div>
-
-        <!-- NÍVEL 3: QUESTÃO 1 -->
-        <div class="slide">
-            <div class="badge">Nível 3: Questão Fatos</div>
-            <p><strong>Q7. Uma calcificação que acontece na parede de uma artéria lesionada por aterosclerose, em um paciente com exames de cálcio sérico normais, é do tipo:</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Distrófica</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) Metastática</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- NÍVEL 3: QUESTÃO 2 -->
-        <div class="slide">
-            <div class="badge">Nível 3: Questão Análise</div>
-            <p><strong>Q8. Um paciente com tumor na tireoide desenvolveu hipercalcemia extrema. Raios-X mostraram calcificações nos rins sadios. Qual o diagnóstico desse processo?</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Calcificação Distrófica por necrose</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Calcificação Metastática por hipercalcemia</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- NÍVEL 3: QUESTÃO 3 -->
-        <div class="slide">
-            <div class="badge">Nível 3: Questão Advanced</div>
-            <p><strong>Q9. Como são chamadas as concreções ou pedras formadas por deposição de sais minerais em órgãos ocos ou ductos (como rins e vesícula)?</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) Metaplasias</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) Litíases ou Cálculos</button>
-                <button class="option-btn" onclick="checkAns(this, false)">C) Necroses caseosas</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- DESAFIO FINAL: QUESTÃO 1 -->
-        <div class="slide">
-            <div class="badge" style="background: #f1c40f; color:#000;">Desafio Mix: Master</div>
-            <p><strong>Q10. Se as células do miocárdio de um idoso apresentam grânulos castanhos ao redor do núcleo sem histórico de infarto, e suas artérias coronárias apresentam pontos rígidos de cálcio com exames de sangue normais, quais são os achados?</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Lipofuscina no miocárdio e Calcificação Distrófica nas coronárias.</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) Hemossiderina no miocárdio e Calcificação Metastática nas coronárias.</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- DESAFIO FINAL: QUESTÃO 2 -->
-        <div class="slide">
-            <div class="badge" style="background: #f1c40f; color:#000;">Desafio Mix: Master</div>
-            <p><strong>Q11. Por que a necrose celular (morte por agressão severa) atua frequentemente como gatilho para a calcificação distrófica?</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, true)">A) Porque as membranas rompidas liberam fosfatos que se ligam ao cálcio citoplasmático, iniciando a cristalização.</button>
-                <button class="option-btn" onclick="checkAns(this, false)">B) Porque a necrose aumenta o cálcio livre em todo o fluxo sanguíneo.</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- DESAFIO FINAL: QUESTÃO 3 -->
-        <div class="slide">
-            <div class="badge" style="background: #f1c40f; color:#000;">Desafio Mix: Master</div>
-            <p><strong>Q12. Qual a principal diferença laboratorial e diagnóstica na avaliação clínica entre as duas calcificações patológicas?</strong></p>
-            <div class="options-container">
-                <button class="option-btn" onclick="checkAns(this, false)">A) A distrófica necessita de mutação genética ativa e a metastática não.</button>
-                <button class="option-btn" onclick="checkAns(this, true)">B) A metastática cursa obrigatoriamente com alteração nos níveis de cálcio sérico (hipercalcemia); a distrófica mantém o cálcio sanguíneo normal.</button>
-            </div>
-            <div class="feedback"></div>
-        </div>
-
-        <!-- TELA FINAL -->
-        <div class="slide">
-            <div style="text-align: center; margin: auto;">
-                <h1 style="border: none; font-size: 3rem; color: var(--success);">🏆 Tema 3 Concluído!</h1>
-                <p style="font-size: 1.3rem; margin-bottom: 20px;">Você dominou os Distúrbios Pigmentares e Calcificações.</p>
-                <div class="highlight-box" style="border-color: var(--success); text-align: left;">
-                    ✅ Pigmentos Endógenos (Melanina, Hemossiderina, Lipofuscina)<br>
-                    ✅ Pigmentos Exógenos (Tatuagem e Antracose)<br>
-                    ✅ Calcificação Distrófica vs. Metastática (O divisor de águas)
-                </div>
-                <p>Pronto para o próximo bloco sempre que quiser avançar!</p>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="controls">
-        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>Anterior</button>
-        <span class="progress-indicator" id="progressText">Etapa 1 de 14</span>
-        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Próximo</button>
     </div>
 
     <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const prevBtn = document.getElementById('prevBtn');
+        const dataset = [
+            { m: "Saúde e Lesão", d: "Habilidade que o nosso corpo tem de manter um equilíbrio fisiológico interno quase sempre constante, independente das alterações externas.", o: ["Metaplasia", "Homeostase", "Patogênese"], c: "Homeostase" },
+            { m: "Saúde e Lesão", d: "Ruptura ou perda do equilíbrio homeostático quando os mecanismos de adaptação falham diante de uma agressão.", o: ["Doença", "Estroma", "Fagocitose"], c: "Doença" },
+            { m: "Saúde e Lesão", d: "Estudo das causas determinantes de uma doença (Ex: vírus, calor, alterações genéticas).", o: ["Fisiopatologia", "Etiologia", "Morfologia"], c: "Etiologia" },
+            { m: "Saúde e Lesão", d: "O mecanismo, o passo a passo de como o agente agressor age nas moléculas e tecidos para desenvolver a doença.", o: ["Patogênese", "Epônimo", "Atrofia"], c: "Patogênese" },
+            { m: "Saúde e Lesão", d: "Estudo das alterações funcionais no organismo que levam aos sintomas e manifestações clínicas.", o: ["Fisiopatologia", "Etiologia", "Parênquima"], c: "Fisiopatologia" },
+            { m: "Saúde e Lesão", d: "O componente tecidual que realiza a função principal e específica de um órgão (Ex: os hepatócitos no fígado).", o: ["Estroma", "Parênquima", "Matriz Extracelular"], c: "Parênquima" },
+            { m: "Saúde e Lesão", d: "O tecido de suporte estrutural, sustentação, vasos e nervos que dão base de sustentação ao órgão.", o: ["Parênquima", "Estroma", "Epitélio"], c: "Estroma" },
+            { m: "Saúde e Lesão", d: "Mecanismo de defesa celular inata onde a célula engloba e digere partículas ou agentes infecciosos.", o: ["Fagocitose", "Apoptose", "Pinocitose"], c: "Fagocitose" },
+            { m: "Saúde e Lesão", d: "Resposta adaptativa sistêmica do organismo frente a diferentes agressões, sejam físicas, biológicas ou emocionais.", o: ["Hipertrofia", "Estresse", "Cariólise"], c: "Estresse" },
+            { m: "Saúde e Lesão", d: "Modificações morfológicas estruturais que podem ser perfeitamente visualizadas a olho nu pelo patologista.", o: ["Ultraestruturais", "Macroscópicas", "Microscópicas"], c: "Macroscópicas" },
+            { m: "Saúde e Lesão", d: "Modificações estruturais celulares tão finas que necessitam de microscópios eletrônicos de grande aumento para visualização.", o: ["Macroscópicas", "Ultraestruturais", "Bioquímicas"], c: "Ultraestruturais" },
+            { m: "Saúde e Lesão", d: "Sufixo médico universal utilizado na nomenclatura patológica para indicar um processo inflamatório.", o: ["-oma", "-ite", "-ose"], c: "-ite" },
+            { m: "Saúde e Lesão", d: "Doenças que recebem o nome em homenagem a quem as descreveu pela primeira vez (Ex: Doença de Parkinson).", o: ["Epônimos", "CIDs", "Xantomas"], c: "Epônimos" },
+            { m: "Saúde e Lesão", d: "Catálogo e código internacional unificado criado pela OMS para padronizar e comparar o registro de doenças no mundo.", o: ["FADD", "CID", "IAP"], c: "CID" },
+            { m: "Saúde e Lesão", d: "Resposta imune desregulada onde o próprio sistema de defesa do corpo ataca tecidos saudáveis do organismo (Ex: Lúpus).", o: ["Doença Autoimune", "Esteatose", "Antracose"], c: "Doença Autoimune" },
+            { m: "Saúde e Lesão", d: "Substituição adaptativa e reversível de um tipo celular diferenciado por outro de mesma linhagem, em resposta à irritação crônica.", o: ["Hiperplasia", "Metaplasia", "Atrofia"], c: "Metaplasia" },
+            { m: "Degenerações", d: "Tipo de lesão não letal onde as células continuam vivas e podem retornar à normalidade se a agressão cessar.", o: ["Lesão Irreversível", "Lesão Reversível", "Necrose"], c: "Lesão Reversível" },
+            { m: "Degenerações", d: "Outro nome dado à degeneração hidrópica, caracterizada pelo inchaço da célula por retenção de água e eletrólitos.", o: ["Tumefação celular", "Retração celular", "Esteatose"], c: "Tumefação celular" },
+            { m: "Degenerações", d: "Complexo proteico enzimático de membrana dependente de ATP responsável por controlar o fluxo de íons contra o gradiente.", o: ["Bomba de Sódio/Potássio", "Receptor Fas", "Proteína FLIP"], c: "Bomba de Sódio/Potássio" },
+            { m: "Degenerações", d: "Forma extrema de degeneração hidrópica que ocorre nos hepatócitos, deixando o citoplasma cheio de grandes vacúolos líquidicos.", o: ["Degeneração Hialina", "Degeneração Baloniforme", "Lipidose"], c: "Degeneração Baloniforme" },
+            { m: "Degenerações", d: "Termo de origem grega que significa vítreo, homogêneo e translúcido, descrevendo acúmulos proteicos brilhantes e róseos.", o: ["Hialina", "Esteatose", "Cálcica"], c: "Hialina" },
+            { m: "Degenerações", d: "Aglomerado proteico hialino induzido por radicais livres encontrado em hepatócitos de alcoólatras crônicos.", o: ["Corpúsculo de Russell", "Corpúsculo de Mallory-Denk", "Corpo Apoptótico"], c: "Corpúsculo de Mallory-Denk" },
+            { m: "Degenerações", d: "Proteínas sinalizadoras produzidas por leucócitos cuja função é mediar e regular respostas imunológicas e inflamatórias.", o: ["Citocinas", "Caspases", "Alarminas"], c: "Citocinas" },
+            { m: "Degenerações", d: "Células do sistema imune derivadas dos linfócitos B especializadas na produção em massa de anticorpos circulantes.", o: ["Neutrófilos", "Plasmócitos", "Macrófagos"], c: "Plasmócitos" },
+            { m: "Degenerações", d: "Acúmulo excessivo e hialino de imunoglobulinas no interior do citoplasma de plasmócitos hiperativados.", o: ["Corpúsculos de Russell", "Figuras de Mielina", "Xantomas"], c: "Corpúsculos de Russell" },
+            { m: "Degenerações", d: "Presença patológica de excesso de proteínas na urina, gerando degeneração hialina por reabsorção tubular renal.", o: ["Proteinúria", "Hipercalcemia", "Esteatose"], c: "Proteinúria" },
+            { m: "Degenerações", d: "Acúmulo anormal de gorduras neutras (mono, di ou triglicerídeos) no citoplasma de células parenquimatosas, comum no fígado.", o: ["Lipidose", "Esteatose", "Degeneração Hialina"], c: "Esteatose" },
+            { m: "Degenerações", d: "Coenzima essencial (Nicotinamida Adenina Dinucleotídeo) para quebra de gorduras cuja escassez por consumo de álcool induz esteatose.", o: ["ATP", "NAD", "FADD"], c: "NAD" },
+            { m: "Degenerações", d: "Esteatose em fase inicial com pequenas gotículas de gordura distribuídas na periferia celular sem deformar ou deslocar o núcleo.", o: ["Esteatose Microgoticular", "Esteatose Macrogoticular", "Lipidose Sistêmica"], c: "Esteatose Microgoticular" },
+            { m: "Degenerações", d: "Esteatose avançada onde uma imensa vesícula lipídica única empurra o núcleo celular para a borda.", o: ["Esteatose Microgoticular", "Esteatose Macrogoticular", "Xantoma"], c: "Esteatose Macrogoticular" },
+            { m: "Morte Celular", d: "Acúmulos intracelulares locais ou sistêmicos de gorduras que NÃO são triglicerídeos, como o colesterol e seus ésteres.", o: ["Lipidoses", "Esteatose", "Degeneração Hialina"], c: "Lipidoses" },
+            { m: "Morte Celular", d: "Doença inflamatória crônica caracterizada por depósitos focais de colesterol na camada íntima de artérias de grande e médio calibre.", o: ["Aterosclerose", "Arteríola Hialina", "Cirrose Hepática"], c: "Aterosclerose" },
+            { m: "Morte Celular", d: "Placas ou nódulos amarelados na pele formados por macrófagos espumosos cheios de colesterol.", o: ["Corpúsculos de Russell", "Xantomas", "Figuras de Mielina"], c: "Xantomas" },
+            { m: "Morte Celular", d: "Deposição de sais de cálcio de forma local em tecidos previamente lesionados, mortos ou necróticos, com cálcio sérico normal.", o: ["Calcificação Distrófica", "Calcificação Metastática", "Litíase renal"], c: "Calcificação Distrófica" },
+            { m: "Morte Celular", d: "Deposição de sais de cálcio em tecidos normais e saudáveis, decorrente obrigatoriamente de uma hipercalcemia sérica.", o: ["Calcificação Distrófica", "Calcificação Metastática", "Cálculos"], c: "Calcificação Metastática" },
+            { m: "Morte Celular", d: "Moléculas de estresse interno liberadas na necrose que alertam o sistema imune e disparam a resposta inflamatória.", o: ["Citocinas", "Alarminas", "Caspases"], c: "Alarminas" },
+            { m: "Morte Celular", d: "Alteração nuclear na necrose marcada por intensa condensação da cromatina, tornando o núcleo pequeno e muito escuro.", o: ["Picnose", "Cariólise", "Cariorréxis"], c: "Picnose" },
+            { m: "Morte Celular", d: "Dissolução e desaparecimento completo da cromatina nuclear devido à ação de desoxirribonucleases.", o: ["Picnose", "Cariólise", "Cariorréxis"], c: "Cariólise" },
+            { m: "Morte Celular", d: "Fragmentação e dispersão do núcleo celular em pedaços pelo citoplasma na morte por necrose.", o: ["Picnose", "Cariólise", "Cariorréxis"], c: "Cariorréxis" },
+            { m: "Morte Celular", d: "Morte celular programada, ativa com gasto de ATP, executada por caspases sem induzir resposta inflamatória.", o: ["Necrose", "Apoptose", "Autólise"], c: "Apoptose" }
+        ];
+
+        let index = 0;
+        let lockSelection = false;
+
+        const moduleTitle = document.getElementById('moduleTitle');
+        const scoreText = document.getElementById('scoreText');
+        const definitionText = document.getElementById('definitionText');
+        const optionsBox = document.getElementById('optionsBox');
+        const feedbackBox = document.getElementById('feedbackBox');
         const nextBtn = document.getElementById('nextBtn');
-        const progressText = document.getElementById('progressText');
+        const playArea = document.getElementById('playArea');
+        const endArea = document.getElementById('endArea');
 
-        function updateControls() {
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === slides.length - 1;
-            progressText.innerText = `Etapa ${currentSlide + 1} de ${slides.length}`;
-        }
+        function loadTerm() {
+            if (index >= dataset.length) {
+                playArea.style.display = 'none';
+                endArea.style.display = 'flex';
+                moduleTitle.innerText = "Treino Concluído";
+                scoreText.innerText = "";
+                return;
+            }
 
-        function changeSlide(direction) {
-            slides[currentSlide].classList.remove('active');
-            currentSlide += direction;
-            slides[currentSlide].classList.add('active');
-            updateControls();
-        }
-
-        function checkAns(btn, isCorrect) {
-            const feedback = btn.parentElement.nextElementSibling;
-            const allButtons = btn.parentElement.querySelectorAll('.option-btn');
+            const current = dataset[index];
+            moduleTitle.innerText = `Módulo: ${current.m}`;
+            scoreText.innerText = `Termo ${index + 1} de ${dataset.length}`;
+            definitionText.innerText = current.d;
             
-            allButtons.forEach(b => b.disabled = true);
+            feedbackBox.style.display = 'none';
+            nextBtn.style.display = 'none';
+            optionsBox.innerHTML = "";
+            lockSelection = false;
 
-            if(isCorrect) {
-                feedback.innerText = "🎯 Correto! Fixação perfeita.";
-                feedback.className = "feedback correct";
-                btn.style.background = "#78e08f";
+            current.o.forEach((opt, idx) => {
+                const button = document.createElement('button');
+                button.className = "option-btn";
+                button.innerHTML = `<strong>[ ${idx + 1} ]</strong> &nbsp; ${opt}`;
+                button.onclick = () => checkChoice(idx, opt, current.c);
+                optionsBox.appendChild(button);
+            });
+        }
+
+        function checkChoice(selectedIndex, selected, correct) {
+            if(lockSelection) return;
+            lockSelection = true;
+
+            const buttons = optionsBox.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            nextBtn.style.display = 'block';
+
+            if (selected === correct) {
+                feedbackBox.innerText = `🎯 Excelente, Wael! Resposta Correta: ${correct.toUpperCase()}`;
+                feedbackBox.className = "feedback correct";
+                buttons[selectedIndex].style.background = "#2ecc71";
+                buttons[selectedIndex].style.color = "white";
+                buttons[selectedIndex].style.borderColor = "#2ecc71";
             } else {
-                feedback.innerText = "❌ Incorreto. Lembre-se das regras do cálcio e das cores dos depósitos.";
-                feedback.className = "feedback wrong";
-                btn.style.background = "#eb2f06";
-                btn.style.color = "white";
+                feedbackBox.innerText = `❌ Incorreto. O conceito refere-se a: ${correct.toUpperCase()}`;
+                feedbackBox.className = "feedback wrong";
+                buttons[selectedIndex].style.background = "#e74c3c";
+                buttons[selectedIndex].style.color = "white";
+                buttons[selectedIndex].style.borderColor = "#e74c3c";
+                
+                buttons.forEach(b => {
+                    if(b.innerText.includes(correct)) {
+                        b.style.background = "#2ecc71";
+                        b.style.color = "white";
+                        b.style.borderColor = "#2ecc71";
+                    }
+                });
             }
         }
 
+        function nextTerm() {
+            index++;
+            loadTerm();
+        }
+
+        // Ouvinte de eventos no teclado para comandos rápidos de números e navegação
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowRight' && currentSlide < slides.length - 1) changeSlide(1);
-            if (e.key === 'ArrowLeft' && currentSlide > 0) changeSlide(-1);
+            if (index >= dataset.length) return;
+            
+            // Teclas 1, 2 e 3 (tanto na fileira superior quanto no teclado numérico)
+            if (!lockSelection) {
+                if (e.key === '1') {
+                    checkChoice(0, dataset[index].o[0], dataset[index].c);
+                } else if (e.key === '2') {
+                    checkChoice(1, dataset[index].o[1], dataset[index].c);
+                } else if (e.key === '3') {
+                    checkChoice(2, dataset[index].o[2], dataset[index].c);
+                }
+            } else {
+                // Avançar com Enter ou Espaço depois que a seleção for travada
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault(); // Evita scroll indesejado ao apertar Espaço
+                    nextTerm();
+                }
+            }
         });
 
-        updateControls();
+        loadTerm();
     </script>
 </body>
 </html>
