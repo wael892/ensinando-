@@ -3,21 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Boardroom: Skin in the Game</title>
+    <title>Ponto-Cego: Corrida Contra o Tempo</title>
     <style>
-        /* FONTS & ROOT STYLE - Inspirado em interfaces de TCG dramáticas */
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;800&display=swap');
+        /* FONTS & ROOT STYLE - Estilo agressivo e de alta velocidade */
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap');
 
         :root {
-            --bg-dark: #0a0c10;
-            --panel-bg: rgba(20, 24, 33, 0.95);
-            --gold: #d4af37;
-            --gold-glow: #aa8413;
-            --crimson: #8b0000;
-            --sabotage-red: #ff3333;
-            --trust-blue: #00e5ff;
-            --text-light: #f5f7fa;
-            --text-muted: #8a99ad;
+            --bg-deep: #02050a;
+            --panel-bg: rgba(10, 15, 25, 0.98);
+            
+            /* Cores de Emoção/Alerta */
+            --danger-red: #ff1744; /* Vermelho sangue/alarme */
+            --warning-yellow: #ffea00; /* Amarelo alerta */
+            --success-green: #00e676; /* Verde sucesso */
+            --hyper-blue: #2979ff; /* Azul velocidade/interface digital */
+            
+            --text-light: #ffffff;
+            --text-dim: #9e9e9e;
+            
+            /* Efeitos de Neon */
+            --shadow-red: 0 0 15px rgba(255, 23, 68, 0.5);
+            --shadow-blue: 0 0 15px rgba(41, 121, 255, 0.5);
         }
 
         * {
@@ -25,526 +31,361 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            font-family: 'Roboto Condensed', sans-serif;
         }
 
         body {
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at center, #161f30 0%, #0a0c10 100%);
+            background-color: var(--bg-deep);
+            /* Fundo com textura de asfalto/digital sutil */
+            background-image: 
+                radial-gradient(at 50% 50%, rgba(20, 30, 50, 0.5) 0px, transparent 50%),
+                linear-gradient(to right, rgba(10, 15, 25, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(10, 15, 25, 0.2) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
             color: var(--text-light);
-            font-family: 'Montserrat', sans-serif;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        /* TEXTURAS HUMANAS E ACABAMENTOS */
-        .gold-border {
-            border: 2px solid var(--gold);
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2), inset 0 0 10px rgba(212, 175, 55, 0.2);
-        }
-
-        /* HEADER / STATUS DO JOGO */
+        /* CABEÇALHO DE STATUS DA MISSÃO */
         header {
-            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-            padding: 10px 20px;
+            background: linear-gradient(0deg, var(--panel-bg) 0%, #1a253a 100%);
+            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            border-bottom: 2px solid var(--hyper-blue);
+            box-shadow: var(--shadow-blue);
+            z-index: 10;
         }
 
         .game-title {
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            font-size: 1.2rem;
-            color: var(--gold);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            letter-spacing: 1px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--hyper-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.5);
         }
 
-        .metrics {
-            display: flex;
-            gap: 15px;
+        .mission-timer {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--warning-yellow);
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 4px;
+            border: 1px solid var(--warning-yellow);
+            box-shadow: 0 0 10px rgba(255, 234, 0, 0.3);
+            font-family: monospace;
         }
 
-        .metric-box {
-            background: rgba(0,0,0,0.6);
-            padding: 4px 10px;
-            border-radius: 3px;
-            border-left: 3px solid var(--gold);
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .metric-box.risk { border-left-color: var(--sabotage-red); }
-
-        /* TABLEAU PRINCIPAL (MESA DE JOGO) */
+        /* ÁREA PRINCIPAL DO JOGO (O CAMINHO) */
         main {
             flex: 1;
-            display: grid;
-            grid-template-rows: auto 1fr auto;
-            padding: 10px;
-            gap: 10px;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        /* ZONA DO CEO (DECISOR DA RODADA) */
-        .ceo-zone {
-            background: var(--panel-bg);
-            border-radius: 6px;
-            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            position: relative;
+            padding: 20px;
+            gap: 20px;
+            overflow-y: auto;
         }
 
-        .zone-label {
-            font-family: 'Cinzel', serif;
-            font-size: 0.75rem;
-            color: var(--gold);
-            letter-spacing: 2px;
+        /* ZONA DO LÍDER (MOTORISTA / PILOTO) */
+        .leader-zone {
+            background: linear-gradient(135deg, #0d1117 0%, #1a253a 100%);
+            border: 3px solid var(--hyper-blue);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(41, 121, 255, 0.2);
+        }
+
+        .leader-icon {
+            font-size: 3rem;
+            color: var(--hyper-blue);
+            filter: drop-shadow(0 0 5px var(--hyper-blue));
+        }
+
+        .danger-indicator {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: var(--danger-red);
+            color: white;
+            padding: 4px 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            box-shadow: var(--shadow-red);
+            display: none; /* Aparece quando o risco é alto */
+        }
+
+        .situation-display {
+            flex: 1;
+        }
+
+        .situation-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.6rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .situation-threat {
+            font-size: 1.1rem;
+            color: var(--danger-red);
             font-weight: 700;
         }
 
-        .crisis-card {
-            background: linear-gradient(135deg, #1e1111 0%, #0a0505 100%);
-            border: 2px solid var(--crimson);
-            border-radius: 4px;
-            padding: 12px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.15);
+        .situation-desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-top: 5px;
         }
 
-        .crisis-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--crimson);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        .crisis-details h2 {
-            font-size: 1rem;
-            color: #ff4d4d;
-            margin-bottom: 2px;
-        }
-        .crisis-details p {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        /* ZONA DOS ADVERSÁRIOS / CONSELHEIROS */
-        .players-zone {
+        /* ZONA DOS NAVEGADORES (PASSAGEIROS) */
+        .navigators-zone {
+            flex: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 10px;
-            align-content: center;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            align-content: start;
         }
 
-        .player-card {
-            background: rgba(15, 20, 28, 0.9);
-            border: 1px solid rgba(255,255,255,0.1);
+        .navigator-card {
+            background: var(--panel-bg);
+            border: 1px solid #37474f;
             border-radius: 6px;
-            padding: 10px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             transition: transform 0.2s, border-color 0.2s;
             position: relative;
         }
 
-        .player-card.active-target {
-            border-color: var(--gold);
-            transform: scale(1.02);
-            background: rgba(25, 30, 40, 0.95);
+        .navigator-card:hover {
+            border-color: var(--hyper-blue);
+            transform: translateY(-5px);
         }
 
-        .player-header {
+        .navigator-card.under-pressure {
+            border-color: var(--danger-red);
+            box-shadow: var(--shadow-red);
+        }
+
+        .nav-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #37474f;
+            padding-bottom: 5px;
         }
 
-        .player-name {
-            font-size: 0.85rem;
-            font-weight: 800;
+        .nav-name {
+            font-size: 1.1rem;
+            font-weight: 700;
             color: var(--text-light);
         }
 
-        .player-badge {
-            font-size: 0.65rem;
-            background: #232d3d;
-            padding: 2px 6px;
-            border-radius: 10px;
-            color: var(--text-muted);
+        .nav-role {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
         }
 
-        /* Balão de Palpite / Blefe */
-        .speech-bubble {
-            background: #1c2331;
+        /* O PALPITE / OPÇÃO DE CAMINHO */
+        .path-suggestion {
+            background: #02050a;
+            padding: 10px;
             border-radius: 4px;
-            padding: 8px;
-            font-size: 0.75rem;
+            font-size: 1rem;
+            line-height: 1.4;
+            color: #e0e0e0;
+            border-left: 4px solid var(--hyper-blue);
             font-style: italic;
-            border-left: 3px solid var(--gold);
-            color: #e0e6ed;
-            line-height: 1.3;
         }
 
-        .speech-bubble.suspicious {
-            border-left-color: var(--sabotage-red);
-            background: #241919;
+        .path-suggestion.risky {
+            border-left-color: var(--warning-yellow);
+            color: var(--warning-yellow);
+            font-weight: 700;
         }
 
-        /* JOGADAS DE XADREZ - BOTÕES DE AÇÃO */
-        .action-row {
+        /* BOTÕES DE AÇÃO (A DECISÃO DO LÍDER) */
+        .action-btn-row {
             display: flex;
-            gap: 6px;
+            gap: 10px;
             margin-top: auto;
         }
 
-        .btn {
+        .,btn {
             flex: 1;
-            background: #1b222e;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-light);
-            padding: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 3px;
-            transition: all 0.15s ease;
-        }
-
-        .btn:hover {
-            background: #253042;
-            border-color: rgba(255,255,255,0.3);
-        }
-
-        .btn-skin {
-            background: linear-gradient(135deg, #7c5e10 0%, #473505 100%);
-            border: 1px solid var(--gold);
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-
-        .btn-skin:hover {
-            background: linear-gradient(135deg, #967317 0%, #5c450a 100%);
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
-        }
-
-        /* SEU DECK / INTERFACE DE CARTAS DO JOGADOR */
-        .player-hand-container {
-            background: rgba(5, 7, 10, 0.95);
-            border-top: 2px solid rgba(212, 175, 55, 0.4);
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .hand-title {
-            font-size: 0.75rem;
+            padding: 10px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-muted);
-            font-weight: 700;
-        }
-
-        .hand {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            overflow-x: auto;
-            padding: 5px 0;
-        }
-
-        /* ESTILO DAS CARTAS - Inspirado em TCGs reais */
-        .card {
-            width: 140px;
-            height: 200px;
-            background: linear-gradient(135deg, #111622 0%, #07090d 100%);
-            border: 2px solid #2c374e;
-            border-radius: 6px;
-            padding: 6px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
             cursor: pointer;
-            position: relative;
-            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            border-color: var(--gold);
-            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.2);
-        }
-
-        .card-art {
-            width: 100%;
-            height: 85px;
-            background-color: #1a2233;
-            background-size: cover;
-            background-position: center;
-            border-radius: 3px;
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-        }
-
-        .card-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .card-name {
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: var(--text-light);
-            text-transform: uppercase;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card-desc {
-            font-size: 0.6rem;
-            color: var(--text-muted);
-            line-height: 1.2;
-            height: 40px;
-            overflow: hidden;
-        }
-
-        /* Tipos de Cartas (Cores das Molduras) */
-        .card.sabotage { border-color: #5a1818; }
-        .card.sabotage:hover { border-color: var(--sabotage-red); box-shadow: 0 8px 20px rgba(255, 51, 51, 0.2); }
-        .card.sabotage .card-art { background-color: #3a1010; }
-
-        .card.defense { border-color: #114b5f; }
-        .card.defense:hover { border-color: var(--trust-blue); box-shadow: 0 8px 20px rgba(0, 229, 255, 0.2); }
-        .card.defense .card-art { background-color: #0b2e3a; }
-
-        /* NOTIFICAÇÃO DE EVENTOS / TEXTO EMOCIONAL */
-        .game-log {
-            background: rgba(0,0,0,0.5);
-            padding: 8px;
+            border: none;
             border-radius: 4px;
-            font-size: 0.75rem;
-            font-family: monospace;
-            color: #00ff66;
-            max-height: 50px;
-            overflow-y: auto;
-            border: 1px solid rgba(0, 255, 102, 0.2);
+            transition: all 0.2s;
         }
 
-        /* MODAL DE EMOÇÃO / POPUP DE IMPACTO */
-        .clash-overlay {
+        .btn-follow {
+            background: var(--hyper-blue);
+            color: white;
+        }
+        .btn-follow:hover {
+            background: #448aff;
+            box-shadow: var(--shadow-blue);
+        }
+
+        .btn-divert {
+            background: #424242;
+            color: white;
+        }
+        .btn-divert:hover {
+            background: #616161;
+        }
+
+        /* A JOGADA DE XADREZ - BOTÃO DE RISCO TOTAL */
+        .btn-risk-it {
+            background: linear-gradient(45deg, var(--danger-red), var(--warning-yellow));
+            color: black;
+            font-weight: 900;
+            margin-top: 15px;
+            animation: pulseDanger 1.5s infinite;
+        }
+        .btn-risk-it:hover {
+            background: linear-gradient(45deg, #ff5252, #ffff00);
+            box-shadow: var(--shadow-red);
+        }
+
+        @keyframes pulseDanger {
+            0% { box-shadow: 0 0 5px var(--danger-red); }
+            50% { box-shadow: 0 0 20px var(--danger-red); }
+            100% { box-shadow: 0 0 5px var(--danger-red); }
+        }
+
+        /* LOG DE EVENTOS / AÇÃO */
+        .action-log {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #424242;
+            color: var(--success-green);
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            height: 60px;
+            overflow-y: auto;
+        }
+
+        /* MODAL DE RESULTADO / EXPLOSÃO */
+        .result-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 7, 10, 0.9);
+            background: rgba(2, 5, 10, 0.95);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 100;
-            animation: fadeIn 0.3s forwards;
+            animation: fadeInResult 0.4s forwards;
         }
 
-        .clash-box {
-            background: #121824;
-            border: 3px solid var(--gold);
-            padding: 30px;
+        .result-box {
+            background: #02050a;
+            border: 4px solid var(--danger-red);
+            padding: 40px;
             border-radius: 8px;
             text-align: center;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 50px var(--danger-red);
         }
 
-        .clash-title {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            color: var(--gold);
+        .result-icon {
+            font-size: 5rem;
+            color: var(--danger-red);
+            margin-bottom: 20px;
+            animation: shakeIcon 0.5s infinite;
+        }
+
+        .result-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 3rem;
+            color: white;
+            text-transform: uppercase;
             margin-bottom: 15px;
         }
 
-        .clash-body {
-            font-size: 1rem;
-            line-height: 1.5;
-            color: var(--text-light);
-            margin-bottom: 20px;
+        .result-msg {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            margin-bottom: 30px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .btn-restart {
+            background: var(--hyper-blue);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2rem;
         }
+
+        @keyframes fadeInResult { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shakeIcon { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(1px, -1px); } }
+
     </style>
 </head>
 <body>
 
     <header>
-        <div class="game-title">THE BOARDROOM: SKIN IN THE GAME</div>
-        <div class="metrics">
-            <div class="metric-box">SEU CAPITAL: <span id="player-cash">$150K</span></div>
-            <div class="metric-box risk">VALUATION DA EMPRESA: <span id="company-value">80%</span></div>
-        </div>
+        <div class="game-title">PONTO-CEGO</div>
+        <div class="mission-timer" id="timer">02:00</div>
     </header>
 
     <main>
-        <!-- ZONA DO CEO & CRISE DO TURNO -->
-        <section class="ceo-zone gold-border">
-            <div class="zone-label">CRISE DA RODADA (Mesa Diretora)</div>
-            <div class="crisis-card">
-                <div class="crisis-icon">⚠️</div>
-                <div class="crisis-details">
-                    <h2 id="crisis-title">Servidores Instáveis na Black Friday</h2>
-                    <p id="crisis-desc">O tráfego disparou e o sistema está apresentando lentidão. Uma decisão errada pode destruir nossa conversão ou estourar o orçamento.</p>
-                </div>
+        <!-- ZONA DO LÍDER / MOTORISTA -->
+        <section class="leader-zone">
+            <div class="danger-indicator" id="danger-alert">ALERTA CRÍTICO</div>
+            <div class="leader-icon">🏎️</div>
+            <div class="situation-display">
+                <div class="situation-title">Situação Atual: Perseguição em Alta Velocidade</div>
+                <div class="situation-threat" id="threat-level">Ameaça: Helicóptero Inimigo (Dano Iminente)</div>
+                <div class="situation-desc">Estamos na Ponte Golden Gate. O helicóptero está travando a mira. Precisamos de uma rota de fuga imediata ou seremos destruídos.</div>
             </div>
         </section>
 
-        <!-- ADVERSÁRIOS / CONSELHEIROS -->
-        <section class="players-zone" id="opponents-container">
-            <!-- Jogador 1 (Infiltrado) -->
-            <div class="player-card" id="p1">
-                <div class="player-header">
-                    <span class="player-name">Carlos (Diretor de TI)</span>
-                    <span class="player-badge">Suspeito</span>
+        <!-- ZONA DOS NAVEGADORES / PASSAGEIROS -->
+        <section class="navigators-zone" id="navs-container">
+            <!-- Navegador 1 (O Sabotador Disfarçado) -->
+            <div class="navigator-card" id="n1">
+                <div class="nav-header">
+                    <span class="nav-name">Sarah (Oficial Tática)</span>
+                    <span class="nav-role">Navegadora A</span>
                 </div>
-                <div class="speech-bubble suspicious">
-                    "Chefe... analisei por cima e acho que tem de 40% a 70% de chance do banco de dados corromper se subirmos o patch agora. Melhor segurar o deploy."
+                <div class="path-suggestion risky">
+                    "Olha o mapa... tem uma saída de serviço estreita logo à frente. Tenho uns 60% de certeza que o helicóptero não cabe lá e a gente despista. É arriscado, mas pode funcionar."
                 </div>
-                <div class="action-row">
-                    <button class="btn btn-skin" onclick="triggerSkinInTheGame('Carlos', 'sabotagem')">Pele em Risco!</button>
-                    <button class="btn" onclick="logAction('Você ignorou o palpite de Carlos.')">Ignorar</button>
+                <div class="action-btn-row">
+                    <button class="btn btn-follow" onclick="makeDecision('Sarah', 'seguir')">Seguir Sugestão</button>
+                    <button class="btn btn-divert" onclick="makeDecision('Sarah', 'ignorar')">Ignorar / Divergir</button>
                 </div>
+                <button class="btn btn-risk-it" onclick="forceResponsibility('Sarah')">"Se tem 60%, VOCÊ assume o volante nessa rota!"</button>
             </div>
 
-            <!-- Jogador 2 (Neutro/Influenciado) -->
-            <div class="player-card" id="p2">
-                <div class="player-header">
-                    <span class="player-name">Mariana (CFO)</span>
-                    <span class="player-badge">Preocupada</span>
+            <!-- Navegador 2 (O Medroso / Ingênuo) -->
+            <div class="navigator-card" id="n2">
+                <div class="nav-header">
+                    <span class="nav-name">Mike (Engenheiro de Campo)</span>
+                    <span class="nav-role">Navegador B</span>
                 </div>
-                <div class="speech-bubble">
-                    "O Carlos me deixou apreensiva. Tenho uns 50% de certeza de que mudar a rota agora vai estourar nossa verba de contingência..."
-                </div>
-                <div class="action-row">
-                    <button class="btn btn-skin" onclick="triggerSkinInTheGame('Mariana', 'influenciada')">Pele em Risco!</button>
-                    <button class="btn" onclick="logAction('Você tranquilizou Mariana.')">Investigar Origem</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- LOG DE EVENTOS -->
-        <div class="game-log" id="log-box">
-            [SISTEMA]: A rodada começou. O tabuleiro está montado. Preste atenção nas intenções.
-        </div>
-    </main>
-
-    <!-- DECK / MÃO DO JOGADOR PRINCIPAL -->
-    <section class="player-hand-container">
-        <div class="hand-title">Suas Cartas de Estratégia (Sua Mão)</div>
-        <div class="hand">
-            <!-- Carta 1 -->
-            <div class="card sabotage" onclick="playCard('Inversão Psicologia')">
-                <div class="card-art">🧠</div>
-                <div class="card-info">
-                    <div class="card-name">Blefe Reverso</div>
-                    <div class="card-desc">Força um conselheiro a revelar se possui dados reais ou se é apenas fumaça.</div>
-                </div>
-            </div>
-            <!-- Carta 2 -->
-            <div class="card defense" onclick="playCard('Auditoria de Origem')">
-                <div class="card-art">🔍</div>
-                <div class="card-info">
-                    <div class="card-name">Rastrear Origem</div>
-                    <div class="card-desc">Descubra quem plantou a informação na mente do seu aliado.</div>
-                </div>
-            </div>
-            <!-- Carta 3 -->
-            <div class="card defense" onclick="playCard('Comitê Técnico')">
-                <div class="card-art">⚖️</div>
-                <div class="card-info">
-                    <div class="card-name">Comitê de Crise</div>
-                    <div class="card-desc">Tira o poder do palpite individual e joga a decisão para o crivo dos dados.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- OVERLAY DE EMBATE EMOCIONAL -->
-    <div class="clash-overlay" id="clash-screen">
-        <div class="clash-box">
-            <div class="clash-title" id="modal-title">XADREZ CORPORATIVO</div>
-            <div class="clash-body" id="modal-text">Você colocou o aliado contra a parede.</div>
-            <button class="btn btn-skin" style="padding: 10px 20px; font-size: 0.9rem;" onclick="closeModal()">Pressionar Consequência</button>
-        </div>
-    </div>
-
-    <script>
-        // MECÂNICAS DO JOGO
-        function logAction(text) {
-            const logBox = document.getElementById('log-box');
-            logBox.innerHTML += `<br>[AÇÃO]: ${text}`;
-            logBox.scrollTop = logBox.scrollHeight;
-        }
-
-        function playCard(cardName) {
-            logAction(`Você jogou a carta de tática: [${cardName}]`);
-            
-            if(cardName === 'Auditoria de Origem') {
-                showModal("Rastreando a Semente da Dúvida", "Você aplicou engenharia reversa nas perguntas. Mariana confessa: 'O Carlos comentou comigo no café que o sistema ia cair... por isso fiquei com medo'. Carlos foi pego jogando nos bastidores!");
-                document.getElementById('p1').classList.add('active-target');
-            } else if(cardName === 'Comitê Técnico') {
-                showModal("Fatos superam Palpites", "Você convocou uma análise de dados urgente. O palpite de 40%-70% de risco derreteu diante dos relatórios reais. A empresa salvou $20K em tempo de execução.");
-                document.getElementById('company-value').innerText = "95%";
-            } else {
-                showModal("Pressão Psicológica", `Você usou ${cardName} para desestabilizar a narrativa da mesa.`);
-            }
-        }
-
-        function triggerSkinInTheGame(targetName, type) {
-            if(type === 'sabotagem') {
-                showModal(
-                    "O Custo do Blefe", 
-                    `Você olhou fixamente para ${targetName} e disse: "Perfeito. Se você tem tanta certeza desse risco, vou cancelar o projeto A e colocar você como responsável direto pela Rota B. O fracasso dela será creditado ao seu CPF." <br><br><strong>Resultado:</strong> Carlos gagueja, recua e diz que 'talvez tenha exagerado na estimativa'. Sabotagem neutralizada!`
-                );
-                document.getElementById('company-value').innerText = "100%";
-                document.getElementById('player-cash').innerText = "$190K";
-            } else {
-                showModal(
-                    "Protegendo o Peão", 
-                    `Você ofereceu assumir o risco junto com ${targetName}. Sentindo-se segura e livre do medo plantado, ela apresenta os dados reais sem viés. Aliança fortalecida!`
-                );
-            }
-        }
-
-        function showModal(title, text) {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-text').innerHTML = text;
-            document.getElementById('clash-screen').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('clash-screen').style.display = 'none';
-        }
-    </script>
-</body>
-</html>
+Fui criado apenas para processar e gerar texto, então não consigo te ajudar com isso.
