@@ -99,6 +99,12 @@
         }
 
         button:hover { background-color: #0056b3; }
+        
+        .btn-clear {
+            background-color: #6c757d;
+            margin-top: auto;
+        }
+        .btn-clear:hover { background-color: #545b62; }
 
         /* Aba 1: Matriz */
         .matrix {
@@ -223,11 +229,13 @@
 </head>
 <body>
 
+    <!-- Abas de Navegação -->
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('matriz-tab', this)">Matriz de Eisenhower</button>
         <button class="tab-btn" onclick="switchTab('tempo-tab', this)">Calculadora de Tempos</button>
     </div>
 
+    <!-- ABA 1: MATRIZ -->
     <div id="matriz-tab" class="tab-content active">
         <header>
             <input type="text" id="task-input" placeholder="Nova tarefa...">
@@ -260,6 +268,7 @@
         </div>
     </div>
 
+    <!-- ABA 2: CALCULADORA DE TEMPO -->
     <div id="tempo-tab" class="tab-content">
         <div class="time-inputs">
             <input type="text" id="time-task-input" placeholder="O que vai fazer? (Ex: Assistir Aula 1, Revisão...)">
@@ -268,11 +277,13 @@
         </div>
 
         <div class="time-container">
+            <!-- Lista de Tempos -->
             <div class="time-panel panel-left">
                 <h2>Tarefas Planejadas</h2>
                 <ul class="todo-list" id="time-task-list"></ul>
             </div>
 
+            <!-- Resumos e Totais -->
             <div class="time-panel panel-right">
                 <h2>Resumo do Tempo</h2>
                 <div class="total-box">
@@ -281,6 +292,7 @@
                 <div class="total-box highlight">
                     Total Formatado: <span id="total-formatted">0h 00m</span>
                 </div>
+                <button class="btn-clear" onclick="clearAllTimeTasks()">Limpar Tudo</button>
             </div>
         </div>
     </div>
@@ -295,6 +307,16 @@
             btn.classList.add('active');
         }
 
+        // --- PERSISTÊNCIA DE DADOS (LOCALSTORAGE) ---
+        let matrixTasks = JSON.parse(localStorage.getItem('matrixTasks')) || [];
+        let timeTasks = JSON.parse(localStorage.getItem('timeTasks')) || [];
+
+        // Inicializa ao carregar a página
+        window.onload = function() {
+            renderMatrixTasks();
+            renderTimeTasks();
+        };
+
         // --- SISTEMA DA MATRIZ ---
         function addTask() {
             const input = document.getElementById('task-input');
@@ -304,43 +326,74 @@
 
             if (taskText === '') return;
 
-            const targetList = document.getElementById(`list-${targetQuadrant}`);
-            const li = document.createElement('li');
-            li.className = 'todo-item';
+            const newTask = {
+                id: Date.now(),
+                text: taskText,
+                quadrant: targetQuadrant,
+                completed: false
+            };
 
-            const span = document.createElement('span');
-            span.textContent = taskText;
-            li.appendChild(span);
-
-            const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'actions';
-
-            const doneBtn = document.createElement('button');
-            doneBtn.className = 'btn-done';
-            doneBtn.textContent = '✓';
-            doneBtn.onclick = function() { li.classList.toggle('completed'); };
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn-delete';
-            deleteBtn.textContent = '✕';
-            deleteBtn.onclick = function() { li.remove(); };
-
-            actionsDiv.appendChild(doneBtn);
-            actionsDiv.appendChild(deleteBtn);
-            li.appendChild(actionsDiv);
-            targetList.appendChild(li);
+            matrixTasks.push(newTask);
+            localStorage.setItem('matrixTasks', JSON.stringify(matrixTasks));
+            
+            renderMatrixTasks();
 
             input.value = '';
             input.focus();
+        }
+
+        function renderMatrixTasks() {
+            // Limpa as listas visuais antes de renderizar
+            document.getElementById('list-q1').innerHTML = '';
+            document.getElementById('list-q2').innerHTML = '';
+            document.getElementById('list-q3').innerHTML = '';
+            document.getElementById('list-q4').innerHTML = '';
+
+            matrixTasks.forEach(task => {
+                const targetList = document.getElementById(`list-${task.quadrant}`);
+                if (!targetList) return;
+
+                const li = document.createElement('li');
+                li.className = `todo-item ${task.completed ? 'completed' : ''}`;
+
+                const span = document.createElement('span');
+                span.textContent = task.text;
+                li.appendChild(span);
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'actions';
+
+                const doneBtn = document.createElement('button');
+                doneBtn.className = 'btn-done';
+                doneBtn.textContent = '✓';
+                doneBtn.onclick = function() {
+                    task.completed = !task.completed;
+                    localStorage.setItem('matrixTasks', JSON.stringify(matrixTasks));
+                    renderMatrixTasks();
+                };
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn-delete';
+                deleteBtn.textContent = '✕';
+                deleteBtn.onclick = function() {
+                    matrixTasks = matrixTasks.filter(t => t.id !== task.id);
+                    localStorage.setItem('matrixTasks', JSON.stringify(matrixTasks));
+                    renderMatrixTasks();
+                };
+
+                actionsDiv.appendChild(doneBtn);
+                actionsDiv.appendChild(deleteBtn);
+                li.appendChild(actionsDiv);
+                targetList.appendChild(li);
+            });
         }
 
         document.getElementById('task-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') addTask();
         });
 
-        // --- SISTEMA DE CÁLCULO DE TEMPO ---
-        let totalMinutes = 0;
 
+        // --- SISTEMA DE CÁLCULO DE TEMPO ---
         function addTimeTask() {
             const taskInput = document.getElementById('time-task-input');
             const durationInput = document.getElementById('time-duration-input');
@@ -349,41 +402,55 @@
 
             if (taskText === '' || isNaN(duration) || duration <= 0) return;
 
-            const list = document.getElementById('time-task-list');
-            const li = document.createElement('li');
-            li.className = 'todo-item';
-            li.dataset.minutes = duration;
-
-            const span = document.createElement('span');
-            span.textContent = `${taskText} (${duration} min)`;
-            li.appendChild(span);
-
-            const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'actions';
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn-delete';
-            deleteBtn.textContent = '✕';
-            deleteBtn.onclick = function() {
-                totalMinutes -= duration;
-                li.remove();
-                updateTimeDisplay();
+            const newTimeTask = {
+                id: Date.now(),
+                text: taskText,
+                minutes: duration
             };
 
-            actionsDiv.appendChild(deleteBtn);
-            li.appendChild(actionsDiv);
-            list.appendChild(li);
+            timeTasks.push(newTimeTask);
+            localStorage.setItem('timeTasks', JSON.stringify(timeTasks));
 
-            // Atualiza e limpa
-            totalMinutes += duration;
-            updateTimeDisplay();
+            renderTimeTasks();
 
             taskInput.value = '';
             durationInput.value = '';
             taskInput.focus();
         }
 
-        function updateTimeDisplay() {
+        function renderTimeTasks() {
+            const list = document.getElementById('time-task-list');
+            list.innerHTML = '';
+            let totalMinutes = 0;
+
+            timeTasks.forEach(task => {
+                const li = document.createElement('li');
+                li.className = 'todo-item';
+
+                const span = document.createElement('span');
+                span.textContent = `${task.text} (${task.minutes} min)`;
+                li.appendChild(span);
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'actions';
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn-delete';
+                deleteBtn.textContent = '✕';
+                deleteBtn.onclick = function() {
+                    timeTasks = timeTasks.filter(t => t.id !== task.id);
+                    localStorage.setItem('timeTasks', JSON.stringify(timeTasks));
+                    renderTimeTasks();
+                };
+
+                actionsDiv.appendChild(deleteBtn);
+                li.appendChild(actionsDiv);
+                list.appendChild(li);
+
+                totalMinutes += task.minutes;
+            });
+
+            // Atualiza os displays de totais
             document.getElementById('total-minutes').textContent = totalMinutes;
             
             const hours = Math.floor(totalMinutes / 60);
@@ -391,6 +458,14 @@
             const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
             
             document.getElementById('total-formatted').textContent = `${hours}h ${formattedMinutes}m`;
+        }
+
+        function clearAllTimeTasks() {
+            if(confirm("Deseja realmente limpar todas as tarefas do cronograma de tempo?")) {
+                timeTasks = [];
+                localStorage.setItem('timeTasks', JSON.stringify(timeTasks));
+                renderTimeTasks();
+            }
         }
 
         document.getElementById('time-task-input').addEventListener('keypress', function(e) {
