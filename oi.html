@@ -3,304 +3,548 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafio Numérico - Patologia Geral</title>
+    <title>The Boardroom: Skin in the Game</title>
     <style>
+        /* FONTS & ROOT STYLE - Inspirado em interfaces de TCG dramáticas */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;800&display=swap');
+
         :root {
-            --primary: #2980b9;
-            --secondary: #3498db;
-            --dark: #2c3e50;
-            --light: #ecf0f1;
-            --success: #27ae60;
-            --error: #c0392b;
+            --bg-dark: #0a0c10;
+            --panel-bg: rgba(20, 24, 33, 0.95);
+            --gold: #d4af37;
+            --gold-glow: #aa8413;
+            --crimson: #8b0000;
+            --sabotage-red: #ff3333;
+            --trust-blue: #00e5ff;
+            --text-light: #f5f7fa;
+            --text-muted: #8a99ad;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
 
         body {
-            background-color: var(--dark);
-            color: #333;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at center, #161f30 0%, #0a0c10 100%);
+            color: var(--text-light);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
-        .game-container {
-            width: 90%;
-            max-width: 800px;
-            height: 80vh;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        /* TEXTURAS HUMANAS E ACABAMENTOS */
+        .gold-border {
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2), inset 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        /* HEADER / STATUS DO JOGO */
+        header {
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .game-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: var(--gold);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            letter-spacing: 1px;
+        }
+
+        .metrics {
+            display: flex;
+            gap: 15px;
+        }
+
+        .metric-box {
+            background: rgba(0,0,0,0.6);
+            padding: 4px 10px;
+            border-radius: 3px;
+            border-left: 3px solid var(--gold);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .metric-box.risk { border-left-color: var(--sabotage-red); }
+
+        /* TABLEAU PRINCIPAL (MESA DE JOGO) */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            padding: 10px;
+            gap: 10px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* ZONA DO CEO (DECISOR DA RODADA) */
+        .ceo-zone {
+            background: var(--panel-bg);
+            border-radius: 6px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            padding: 35px;
+            gap: 8px;
             position: relative;
         }
 
-        .header {
-            border-bottom: 2px solid var(--light);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+        .zone-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .crisis-card {
+            background: linear-gradient(135deg, #1e1111 0%, #0a0505 100%);
+            border: 2px solid var(--crimson);
+            border-radius: 4px;
+            padding: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.15);
+        }
+
+        .crisis-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--crimson);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .crisis-details h2 {
+            font-size: 1rem;
+            color: #ff4d4d;
+            margin-bottom: 2px;
+        }
+        .crisis-details p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ZONA DOS ADVERSÁRIOS / CONSELHEIROS */
+        .players-zone {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            align-content: center;
+        }
+
+        .player-card {
+            background: rgba(15, 20, 28, 0.9);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: transform 0.2s, border-color 0.2s;
+            position: relative;
+        }
+
+        .player-card.active-target {
+            border-color: var(--gold);
+            transform: scale(1.02);
+            background: rgba(25, 30, 40, 0.95);
+        }
+
+        .player-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .title { color: var(--primary); font-size: 1.4rem; font-weight: bold; }
-        .score { font-weight: bold; font-size: 1.1rem; color: var(--primary); }
+        .player-name {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--text-light);
+        }
 
-        .definition-box {
-            flex-grow: 1;
-            font-size: 1.25rem;
-            line-height: 1.6;
+        .player-badge {
+            font-size: 0.65rem;
+            background: #232d3d;
+            padding: 2px 6px;
+            border-radius: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Balão de Palpite / Blefe */
+        .speech-bubble {
+            background: #1c2331;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 0.75rem;
+            font-style: italic;
+            border-left: 3px solid var(--gold);
+            color: #e0e6ed;
+            line-height: 1.3;
+        }
+
+        .speech-bubble.suspicious {
+            border-left-color: var(--sabotage-red);
+            background: #241919;
+        }
+
+        /* JOGADAS DE XADREZ - BOTÕES DE AÇÃO */
+        .action-row {
+            display: flex;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        .btn {
+            flex: 1;
+            background: #1b222e;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-light);
+            padding: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.15s ease;
+        }
+
+        .btn:hover {
+            background: #253042;
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .btn-skin {
+            background: linear-gradient(135deg, #7c5e10 0%, #473505 100%);
+            border: 1px solid var(--gold);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .btn-skin:hover {
+            background: linear-gradient(135deg, #967317 0%, #5c450a 100%);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+        }
+
+        /* SEU DECK / INTERFACE DE CARTAS DO JOGADOR */
+        .player-hand-container {
+            background: rgba(5, 7, 10, 0.95);
+            border-top: 2px solid rgba(212, 175, 55, 0.4);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .hand-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .hand {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            overflow-x: auto;
+            padding: 5px 0;
+        }
+
+        /* ESTILO DAS CARTAS - Inspirado em TCGs reais */
+        .card {
+            width: 140px;
+            height: 200px;
+            background: linear-gradient(135deg, #111622 0%, #07090d 100%);
+            border: 2px solid #2c374e;
+            border-radius: 6px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .card-art {
+            width: 100%;
+            height: 85px;
+            background-color: #1a2233;
+            background-size: cover;
+            background-position: center;
+            border-radius: 3px;
+            border: 1px solid rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            border-left: 6px solid var(--primary);
-            margin-bottom: 25px;
+            font-size: 1.8rem;
         }
 
-        .options-container {
+        .card-info {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 2px;
+        }
+
+        .card-name {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--text-light);
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-desc {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            line-height: 1.2;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        /* Tipos de Cartas (Cores das Molduras) */
+        .card.sabotage { border-color: #5a1818; }
+        .card.sabotage:hover { border-color: var(--sabotage-red); box-shadow: 0 8px 20px rgba(255, 51, 51, 0.2); }
+        .card.sabotage .card-art { background-color: #3a1010; }
+
+        .card.defense { border-color: #114b5f; }
+        .card.defense:hover { border-color: var(--trust-blue); box-shadow: 0 8px 20px rgba(0, 229, 255, 0.2); }
+        .card.defense .card-art { background-color: #0b2e3a; }
+
+        /* NOTIFICAÇÃO DE EVENTOS / TEXTO EMOCIONAL */
+        .game-log {
+            background: rgba(0,0,0,0.5);
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: #00ff66;
+            max-height: 50px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 255, 102, 0.2);
+        }
+
+        /* MODAL DE EMOÇÃO / POPUP DE IMPACTO */
+        .clash-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 7, 10, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .clash-box {
+            background: #121824;
+            border: 3px solid var(--gold);
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .clash-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .clash-body {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-light);
             margin-bottom: 20px;
         }
 
-        .option-btn {
-            background: var(--light);
-            border: 2px solid #ddd;
-            padding: 14px;
-            border-radius: 8px;
-            text-align: left;
-            font-size: 1.1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-        }
-
-        .option-btn:hover:not(:disabled) { 
-            border-color: var(--secondary); 
-            background: #e8ecf8; 
-        }
-
-        .btn-next {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            display: none;
-            text-align: center;
-        }
-
-        .btn-next:hover { background: #2171a3; }
-
-        .feedback {
-            padding: 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 15px;
-            display: none;
-            font-size: 1.1rem;
-        }
-        .feedback.correct { background: #d4edda; color: #155724; display: block; }
-        .feedback.wrong { background: #f8d7da; color: #721c24; display: block; }
-
-        .final-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            text-align: center;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-    <div class="game-container" id="gameBox">
-        <div class="header">
-            <div class="title" id="moduleTitle">Módulo</div>
-            <div class="score" id="scoreText">Termo 1 de 40</div>
+    <header>
+        <div class="game-title">THE BOARDROOM: SKIN IN THE GAME</div>
+        <div class="metrics">
+            <div class="metric-box">SEU CAPITAL: <span id="player-cash">$150K</span></div>
+            <div class="metric-box risk">VALUATION DA EMPRESA: <span id="company-value">80%</span></div>
         </div>
+    </header>
 
-        <div id="playArea" style="display: flex; flex-direction: column; height: 100%;">
-            <div class="definition-box" id="definitionText">
-                Carregando treino dinâmico...
+    <main>
+        <!-- ZONA DO CEO & CRISE DO TURNO -->
+        <section class="ceo-zone gold-border">
+            <div class="zone-label">CRISE DA RODADA (Mesa Diretora)</div>
+            <div class="crisis-card">
+                <div class="crisis-icon">⚠️</div>
+                <div class="crisis-details">
+                    <h2 id="crisis-title">Servidores Instáveis na Black Friday</h2>
+                    <p id="crisis-desc">O tráfego disparou e o sistema está apresentando lentidão. Uma decisão errada pode destruir nossa conversão ou estourar o orçamento.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADVERSÁRIOS / CONSELHEIROS -->
+        <section class="players-zone" id="opponents-container">
+            <!-- Jogador 1 (Infiltrado) -->
+            <div class="player-card" id="p1">
+                <div class="player-header">
+                    <span class="player-name">Carlos (Diretor de TI)</span>
+                    <span class="player-badge">Suspeito</span>
+                </div>
+                <div class="speech-bubble suspicious">
+                    "Chefe... analisei por cima e acho que tem de 40% a 70% de chance do banco de dados corromper se subirmos o patch agora. Melhor segurar o deploy."
+                </div>
+                <div class="action-row">
+                    <button class="btn btn-skin" onclick="triggerSkinInTheGame('Carlos', 'sabotagem')">Pele em Risco!</button>
+                    <button class="btn" onclick="logAction('Você ignorou o palpite de Carlos.')">Ignorar</button>
+                </div>
             </div>
 
-            <div class="feedback" id="feedbackBox"></div>
+            <!-- Jogador 2 (Neutro/Influenciado) -->
+            <div class="player-card" id="p2">
+                <div class="player-header">
+                    <span class="player-name">Mariana (CFO)</span>
+                    <span class="player-badge">Preocupada</span>
+                </div>
+                <div class="speech-bubble">
+                    "O Carlos me deixou apreensiva. Tenho uns 50% de certeza de que mudar a rota agora vai estourar nossa verba de contingência..."
+                </div>
+                <div class="action-row">
+                    <button class="btn btn-skin" onclick="triggerSkinInTheGame('Mariana', 'influenciada')">Pele em Risco!</button>
+                    <button class="btn" onclick="logAction('Você tranquilizou Mariana.')">Investigar Origem</button>
+                </div>
+            </div>
+        </section>
 
-            <div class="options-container" id="optionsBox"></div>
-            
-            <button class="btn-next" id="nextBtn" onclick="nextTerm()">Aperte ENTER ou ESPAÇO para ir ao Próximo Termo ➔</button>
+        <!-- LOG DE EVENTOS -->
+        <div class="game-log" id="log-box">
+            [SISTEMA]: A rodada começou. O tabuleiro está montado. Preste atenção nas intenções.
         </div>
+    </main>
 
-        <div class="final-screen" id="endArea">
-            <h1 style="color: var(--success); font-size: 2.5rem; margin-bottom: 15px;">🏆 Treino de Termos Concluído!</h1>
-            <p style="font-size: 1.3rem; margin-bottom: 25px;">Fixação total atingida com comandos rápidos de teclado.</p>
-            <button class="option-btn" style="max-width: 250px; text-align: center; background: var(--success); color: white; border: none;" onclick="location.reload()">Gabaritar Novamente</button>
+    <!-- DECK / MÃO DO JOGADOR PRINCIPAL -->
+    <section class="player-hand-container">
+        <div class="hand-title">Suas Cartas de Estratégia (Sua Mão)</div>
+        <div class="hand">
+            <!-- Carta 1 -->
+            <div class="card sabotage" onclick="playCard('Inversão Psicologia')">
+                <div class="card-art">🧠</div>
+                <div class="card-info">
+                    <div class="card-name">Blefe Reverso</div>
+                    <div class="card-desc">Força um conselheiro a revelar se possui dados reais ou se é apenas fumaça.</div>
+                </div>
+            </div>
+            <!-- Carta 2 -->
+            <div class="card defense" onclick="playCard('Auditoria de Origem')">
+                <div class="card-art">🔍</div>
+                <div class="card-info">
+                    <div class="card-name">Rastrear Origem</div>
+                    <div class="card-desc">Descubra quem plantou a informação na mente do seu aliado.</div>
+                </div>
+            </div>
+            <!-- Carta 3 -->
+            <div class="card defense" onclick="playCard('Comitê Técnico')">
+                <div class="card-art">⚖️</div>
+                <div class="card-info">
+                    <div class="card-name">Comitê de Crise</div>
+                    <div class="card-desc">Tira o poder do palpite individual e joga a decisão para o crivo dos dados.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OVERLAY DE EMBATE EMOCIONAL -->
+    <div class="clash-overlay" id="clash-screen">
+        <div class="clash-box">
+            <div class="clash-title" id="modal-title">XADREZ CORPORATIVO</div>
+            <div class="clash-body" id="modal-text">Você colocou o aliado contra a parede.</div>
+            <button class="btn btn-skin" style="padding: 10px 20px; font-size: 0.9rem;" onclick="closeModal()">Pressionar Consequência</button>
         </div>
     </div>
 
     <script>
-        const dataset = [
-            { m: "Saúde e Lesão", d: "Habilidade que o nosso corpo tem de manter um equilíbrio fisiológico interno quase sempre constante, independente das alterações externas.", o: ["Metaplasia", "Homeostase", "Patogênese"], c: "Homeostase" },
-            { m: "Saúde e Lesão", d: "Ruptura ou perda do equilíbrio homeostático quando os mecanismos de adaptação falham diante de uma agressão.", o: ["Doença", "Estroma", "Fagocitose"], c: "Doença" },
-            { m: "Saúde e Lesão", d: "Estudo das causas determinantes de uma doença (Ex: vírus, calor, alterações genéticas).", o: ["Fisiopatologia", "Etiologia", "Morfologia"], c: "Etiologia" },
-            { m: "Saúde e Lesão", d: "O mecanismo, o passo a passo de como o agente agressor age nas moléculas e tecidos para desenvolver a doença.", o: ["Patogênese", "Epônimo", "Atrofia"], c: "Patogênese" },
-            { m: "Saúde e Lesão", d: "Estudo das alterações funcionais no organismo que levam aos sintomas e manifestações clínicas.", o: ["Fisiopatologia", "Etiologia", "Parênquima"], c: "Fisiopatologia" },
-            { m: "Saúde e Lesão", d: "O componente tecidual que realiza a função principal e específica de um órgão (Ex: os hepatócitos no fígado).", o: ["Estroma", "Parênquima", "Matriz Extracelular"], c: "Parênquima" },
-            { m: "Saúde e Lesão", d: "O tecido de suporte estrutural, sustentação, vasos e nervos que dão base de sustentação ao órgão.", o: ["Parênquima", "Estroma", "Epitélio"], c: "Estroma" },
-            { m: "Saúde e Lesão", d: "Mecanismo de defesa celular inata onde a célula engloba e digere partículas ou agentes infecciosos.", o: ["Fagocitose", "Apoptose", "Pinocitose"], c: "Fagocitose" },
-            { m: "Saúde e Lesão", d: "Resposta adaptativa sistêmica do organismo frente a diferentes agressões, sejam físicas, biológicas ou emocionais.", o: ["Hipertrofia", "Estresse", "Cariólise"], c: "Estresse" },
-            { m: "Saúde e Lesão", d: "Modificações morfológicas estruturais que podem ser perfeitamente visualizadas a olho nu pelo patologista.", o: ["Ultraestruturais", "Macroscópicas", "Microscópicas"], c: "Macroscópicas" },
-            { m: "Saúde e Lesão", d: "Modificações estruturais celulares tão finas que necessitam de microscópios eletrônicos de grande aumento para visualização.", o: ["Macroscópicas", "Ultraestruturais", "Bioquímicas"], c: "Ultraestruturais" },
-            { m: "Saúde e Lesão", d: "Sufixo médico universal utilizado na nomenclatura patológica para indicar um processo inflamatório.", o: ["-oma", "-ite", "-ose"], c: "-ite" },
-            { m: "Saúde e Lesão", d: "Doenças que recebem o nome em homenagem a quem as descreveu pela primeira vez (Ex: Doença de Parkinson).", o: ["Epônimos", "CIDs", "Xantomas"], c: "Epônimos" },
-            { m: "Saúde e Lesão", d: "Catálogo e código internacional unificado criado pela OMS para padronizar e comparar o registro de doenças no mundo.", o: ["FADD", "CID", "IAP"], c: "CID" },
-            { m: "Saúde e Lesão", d: "Resposta imune desregulada onde o próprio sistema de defesa do corpo ataca tecidos saudáveis do organismo (Ex: Lúpus).", o: ["Doença Autoimune", "Esteatose", "Antracose"], c: "Doença Autoimune" },
-            { m: "Saúde e Lesão", d: "Substituição adaptativa e reversível de um tipo celular diferenciado por outro de mesma linhagem, em resposta à irritação crônica.", o: ["Hiperplasia", "Metaplasia", "Atrofia"], c: "Metaplasia" },
-            { m: "Degenerações", d: "Tipo de lesão não letal onde as células continuam vivas e podem retornar à normalidade se a agressão cessar.", o: ["Lesão Irreversível", "Lesão Reversível", "Necrose"], c: "Lesão Reversível" },
-            { m: "Degenerações", d: "Outro nome dado à degeneração hidrópica, caracterizada pelo inchaço da célula por retenção de água e eletrólitos.", o: ["Tumefação celular", "Retração celular", "Esteatose"], c: "Tumefação celular" },
-            { m: "Degenerações", d: "Complexo proteico enzimático de membrana dependente de ATP responsável por controlar o fluxo de íons contra o gradiente.", o: ["Bomba de Sódio/Potássio", "Receptor Fas", "Proteína FLIP"], c: "Bomba de Sódio/Potássio" },
-            { m: "Degenerações", d: "Forma extrema de degeneração hidrópica que ocorre nos hepatócitos, deixando o citoplasma cheio de grandes vacúolos líquidicos.", o: ["Degeneração Hialina", "Degeneração Baloniforme", "Lipidose"], c: "Degeneração Baloniforme" },
-            { m: "Degenerações", d: "Termo de origem grega que significa vítreo, homogêneo e translúcido, descrevendo acúmulos proteicos brilhantes e róseos.", o: ["Hialina", "Esteatose", "Cálcica"], c: "Hialina" },
-            { m: "Degenerações", d: "Aglomerado proteico hialino induzido por radicais livres encontrado em hepatócitos de alcoólatras crônicos.", o: ["Corpúsculo de Russell", "Corpúsculo de Mallory-Denk", "Corpo Apoptótico"], c: "Corpúsculo de Mallory-Denk" },
-            { m: "Degenerações", d: "Proteínas sinalizadoras produzidas por leucócitos cuja função é mediar e regular respostas imunológicas e inflamatórias.", o: ["Citocinas", "Caspases", "Alarminas"], c: "Citocinas" },
-            { m: "Degenerações", d: "Células do sistema imune derivadas dos linfócitos B especializadas na produção em massa de anticorpos circulantes.", o: ["Neutrófilos", "Plasmócitos", "Macrófagos"], c: "Plasmócitos" },
-            { m: "Degenerações", d: "Acúmulo excessivo e hialino de imunoglobulinas no interior do citoplasma de plasmócitos hiperativados.", o: ["Corpúsculos de Russell", "Figuras de Mielina", "Xantomas"], c: "Corpúsculos de Russell" },
-            { m: "Degenerações", d: "Presença patológica de excesso de proteínas na urina, gerando degeneração hialina por reabsorção tubular renal.", o: ["Proteinúria", "Hipercalcemia", "Esteatose"], c: "Proteinúria" },
-            { m: "Degenerações", d: "Acúmulo anormal de gorduras neutras (mono, di ou triglicerídeos) no citoplasma de células parenquimatosas, comum no fígado.", o: ["Lipidose", "Esteatose", "Degeneração Hialina"], c: "Esteatose" },
-            { m: "Degenerações", d: "Coenzima essencial (Nicotinamida Adenina Dinucleotídeo) para quebra de gorduras cuja escassez por consumo de álcool induz esteatose.", o: ["ATP", "NAD", "FADD"], c: "NAD" },
-            { m: "Degenerações", d: "Esteatose em fase inicial com pequenas gotículas de gordura distribuídas na periferia celular sem deformar ou deslocar o núcleo.", o: ["Esteatose Microgoticular", "Esteatose Macrogoticular", "Lipidose Sistêmica"], c: "Esteatose Microgoticular" },
-            { m: "Degenerações", d: "Esteatose avançada onde uma imensa vesícula lipídica única empurra o núcleo celular para a borda.", o: ["Esteatose Microgoticular", "Esteatose Macrogoticular", "Xantoma"], c: "Esteatose Macrogoticular" },
-            { m: "Morte Celular", d: "Acúmulos intracelulares locais ou sistêmicos de gorduras que NÃO são triglicerídeos, como o colesterol e seus ésteres.", o: ["Lipidoses", "Esteatose", "Degeneração Hialina"], c: "Lipidoses" },
-            { m: "Morte Celular", d: "Doença inflamatória crônica caracterizada por depósitos focais de colesterol na camada íntima de artérias de grande e médio calibre.", o: ["Aterosclerose", "Arteríola Hialina", "Cirrose Hepática"], c: "Aterosclerose" },
-            { m: "Morte Celular", d: "Placas ou nódulos amarelados na pele formados por macrófagos espumosos cheios de colesterol.", o: ["Corpúsculos de Russell", "Xantomas", "Figuras de Mielina"], c: "Xantomas" },
-            { m: "Morte Celular", d: "Deposição de sais de cálcio de forma local em tecidos previamente lesionados, mortos ou necróticos, com cálcio sérico normal.", o: ["Calcificação Distrófica", "Calcificação Metastática", "Litíase renal"], c: "Calcificação Distrófica" },
-            { m: "Morte Celular", d: "Deposição de sais de cálcio em tecidos normais e saudáveis, decorrente obrigatoriamente de uma hipercalcemia sérica.", o: ["Calcificação Distrófica", "Calcificação Metastática", "Cálculos"], c: "Calcificação Metastática" },
-            { m: "Morte Celular", d: "Moléculas de estresse interno liberadas na necrose que alertam o sistema imune e disparam a resposta inflamatória.", o: ["Citocinas", "Alarminas", "Caspases"], c: "Alarminas" },
-            { m: "Morte Celular", d: "Alteração nuclear na necrose marcada por intensa condensação da cromatina, tornando o núcleo pequeno e muito escuro.", o: ["Picnose", "Cariólise", "Cariorréxis"], c: "Picnose" },
-            { m: "Morte Celular", d: "Dissolução e desaparecimento completo da cromatina nuclear devido à ação de desoxirribonucleases.", o: ["Picnose", "Cariólise", "Cariorréxis"], c: "Cariólise" },
-            { m: "Morte Celular", d: "Fragmentação e dispersão do núcleo celular em pedaços pelo citoplasma na morte por necrose.", o: ["Picnose", "Cariólise", "Cariorréxis"], c: "Cariorréxis" },
-            { m: "Morte Celular", d: "Morte celular programada, ativa com gasto de ATP, executada por caspases sem induzir resposta inflamatória.", o: ["Necrose", "Apoptose", "Autólise"], c: "Apoptose" }
-        ];
+        // MECÂNICAS DO JOGO
+        function logAction(text) {
+            const logBox = document.getElementById('log-box');
+            logBox.innerHTML += `<br>[AÇÃO]: ${text}`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
 
-        let index = 0;
-        let lockSelection = false;
-
-        const moduleTitle = document.getElementById('moduleTitle');
-        const scoreText = document.getElementById('scoreText');
-        const definitionText = document.getElementById('definitionText');
-        const optionsBox = document.getElementById('optionsBox');
-        const feedbackBox = document.getElementById('feedbackBox');
-        const nextBtn = document.getElementById('nextBtn');
-        const playArea = document.getElementById('playArea');
-        const endArea = document.getElementById('endArea');
-
-        function loadTerm() {
-            if (index >= dataset.length) {
-                playArea.style.display = 'none';
-                endArea.style.display = 'flex';
-                moduleTitle.innerText = "Treino Concluído";
-                scoreText.innerText = "";
-                return;
-            }
-
-            const current = dataset[index];
-            moduleTitle.innerText = `Módulo: ${current.m}`;
-            scoreText.innerText = `Termo ${index + 1} de ${dataset.length}`;
-            definitionText.innerText = current.d;
+        function playCard(cardName) {
+            logAction(`Você jogou a carta de tática: [${cardName}]`);
             
-            feedbackBox.style.display = 'none';
-            nextBtn.style.display = 'none';
-            optionsBox.innerHTML = "";
-            lockSelection = false;
-
-            current.o.forEach((opt, idx) => {
-                const button = document.createElement('button');
-                button.className = "option-btn";
-                button.innerHTML = `<strong>[ ${idx + 1} ]</strong> &nbsp; ${opt}`;
-                button.onclick = () => checkChoice(idx, opt, current.c);
-                optionsBox.appendChild(button);
-            });
-        }
-
-        function checkChoice(selectedIndex, selected, correct) {
-            if(lockSelection) return;
-            lockSelection = true;
-
-            const buttons = optionsBox.querySelectorAll('.option-btn');
-            buttons.forEach(b => b.disabled = true);
-
-            nextBtn.style.display = 'block';
-
-            if (selected === correct) {
-                feedbackBox.innerText = `🎯 Excelente, Wael! Resposta Correta: ${correct.toUpperCase()}`;
-                feedbackBox.className = "feedback correct";
-                buttons[selectedIndex].style.background = "#2ecc71";
-                buttons[selectedIndex].style.color = "white";
-                buttons[selectedIndex].style.borderColor = "#2ecc71";
+            if(cardName === 'Auditoria de Origem') {
+                showModal("Rastreando a Semente da Dúvida", "Você aplicou engenharia reversa nas perguntas. Mariana confessa: 'O Carlos comentou comigo no café que o sistema ia cair... por isso fiquei com medo'. Carlos foi pego jogando nos bastidores!");
+                document.getElementById('p1').classList.add('active-target');
+            } else if(cardName === 'Comitê Técnico') {
+                showModal("Fatos superam Palpites", "Você convocou uma análise de dados urgente. O palpite de 40%-70% de risco derreteu diante dos relatórios reais. A empresa salvou $20K em tempo de execução.");
+                document.getElementById('company-value').innerText = "95%";
             } else {
-                feedbackBox.innerText = `❌ Incorreto. O conceito refere-se a: ${correct.toUpperCase()}`;
-                feedbackBox.className = "feedback wrong";
-                buttons[selectedIndex].style.background = "#e74c3c";
-                buttons[selectedIndex].style.color = "white";
-                buttons[selectedIndex].style.borderColor = "#e74c3c";
-                
-                buttons.forEach(b => {
-                    if(b.innerText.includes(correct)) {
-                        b.style.background = "#2ecc71";
-                        b.style.color = "white";
-                        b.style.borderColor = "#2ecc71";
-                    }
-                });
+                showModal("Pressão Psicológica", `Você usou ${cardName} para desestabilizar a narrativa da mesa.`);
             }
         }
 
-        function nextTerm() {
-            index++;
-            loadTerm();
+        function triggerSkinInTheGame(targetName, type) {
+            if(type === 'sabotagem') {
+                showModal(
+                    "O Custo do Blefe", 
+                    `Você olhou fixamente para ${targetName} e disse: "Perfeito. Se você tem tanta certeza desse risco, vou cancelar o projeto A e colocar você como responsável direto pela Rota B. O fracasso dela será creditado ao seu CPF." <br><br><strong>Resultado:</strong> Carlos gagueja, recua e diz que 'talvez tenha exagerado na estimativa'. Sabotagem neutralizada!`
+                );
+                document.getElementById('company-value').innerText = "100%";
+                document.getElementById('player-cash').innerText = "$190K";
+            } else {
+                showModal(
+                    "Protegendo o Peão", 
+                    `Você ofereceu assumir o risco junto com ${targetName}. Sentindo-se segura e livre do medo plantado, ela apresenta os dados reais sem viés. Aliança fortalecida!`
+                );
+            }
         }
 
-        // Ouvinte de eventos no teclado para comandos rápidos de números e navegação
-        document.addEventListener('keydown', function(e) {
-            if (index >= dataset.length) return;
-            
-            // Teclas 1, 2 e 3 (tanto na fileira superior quanto no teclado numérico)
-            if (!lockSelection) {
-                if (e.key === '1') {
-                    checkChoice(0, dataset[index].o[0], dataset[index].c);
-                } else if (e.key === '2') {
-                    checkChoice(1, dataset[index].o[1], dataset[index].c);
-                } else if (e.key === '3') {
-                    checkChoice(2, dataset[index].o[2], dataset[index].c);
-                }
-            } else {
-                // Avançar com Enter ou Espaço depois que a seleção for travada
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault(); // Evita scroll indesejado ao apertar Espaço
-                    nextTerm();
-                }
-            }
-        });
+        function showModal(title, text) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-text').innerHTML = text;
+            document.getElementById('clash-screen').style.display = 'flex';
+        }
 
-        loadTerm();
+        function closeModal() {
+            document.getElementById('clash-screen').style.display = 'none';
+        }
     </script>
 </body>
 </html>
